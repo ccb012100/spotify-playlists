@@ -3,6 +3,7 @@ function sm() {
     rg -i "$1" ~/ccb012100/starred_music/starredmusic.tsv | \
     awk -F '\t' '{
         printf "%s\t%s\t%3d\t%s\t%s\n",
-        $1, $2, $3, substr($4,1,4), substr($5,1,10) }' | \
+        $1, $2, $3, substr($4,1,4), substr($5,1,10) }
+        END{print "----\n" NR " matches"}' | \
     column -t -s $'\t'
 }
