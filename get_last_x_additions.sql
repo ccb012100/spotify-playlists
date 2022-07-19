@@ -1,5 +1,5 @@
--- call in CLI: `sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $LIMIT" ".read get_last_x_additions.sql"`
 -- view last $LIMIT tracks, in order of being added to the db
+-- call in CLI: `sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $LIMIT" ".read get_last_x_additions.sql"`
 
 .mode tabs
 
