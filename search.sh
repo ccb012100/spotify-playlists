@@ -7,11 +7,21 @@ function sm() {
         ;;
     last)
         shift
-        limit=10
+        limit=10 # default to 10
         if [[ -n "$1" ]] && [[ "$1" -gt 0 ]]; then
             limit=$1
         fi
-        sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $limit" ".read get_last_x_additions.sql"
+        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read get_last_x_additions.sql"
+        ;;
+    search-db)
+        shift
+        if [[ -n "${*}" ]]; then
+            echo "Matches for '${*}':"
+            sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read search_playlister_db.sql"
+        else
+            echo "Error: need to provide a search term"
+            return 1
+        fi
         ;;
     *)
         # "${*}" will group all the args into a single quoted string, so we
