@@ -5,6 +5,14 @@ function sm() {
         shift
         starred_music_rs # binary in ~/bin/
         ;;
+    last)
+        shift
+        limit=10
+        if [[ -n "$1" ]] && [[ "$1" -gt 0 ]]; then
+            limit=$1
+        fi
+        sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $limit" ".read export_diff_since_last_sync.sql"
+        ;;
     *)
         # "${*}" will group all the args into a single quoted string, so we
         # don't have to wrap the search in quotes on the command line, e.g. we
