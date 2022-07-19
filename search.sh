@@ -11,7 +11,7 @@ function sm() {
         if [[ -n "$1" ]] && [[ "$1" -gt 0 ]]; then
             limit=$1
         fi
-        sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $limit" ".read export_diff_since_last_sync.sql"
+        sqlite3 --readonly "$HOME/playlister.db" ".param set :limit $limit" ".read get_last_x_additions.sql"
         ;;
     *)
         # "${*}" will group all the args into a single quoted string, so we

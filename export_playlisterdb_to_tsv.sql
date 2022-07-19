@@ -1,4 +1,4 @@
-# sqlite3 ~/playlister.db ".read export_playlisterdb_to_tsv.sql"
+-- sqlite3 ~/playlister.db ".read export_playlisterdb_to_tsv.sql"
 
 .headers on
 .mode tabs
