@@ -19,7 +19,7 @@ function sm() {
             echo "Matches for '${*}':"
             sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read search_playlister_db.sql"
         else
-            echo "Error: need to provide a search term"
+            echo >&2 "Error: need to provide a search term"
             return 1
         fi
         ;;
