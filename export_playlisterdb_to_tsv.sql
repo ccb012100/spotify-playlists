@@ -12,7 +12,7 @@ join playlisttrack pt on pt.track_id = t.id
 join playlist p on p.id = pt.playlist_id
 where p.name like 'starred%'
 group by a.id
-order by art.name COLLATE NOCASE ASC, a.name COLLATE NOCASE ASC;
+order by pt.added_at;
 
 .output stdout
 .headers off
