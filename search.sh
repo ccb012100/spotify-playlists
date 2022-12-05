@@ -13,7 +13,7 @@ function sm() {
         fi
         sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read get_last_x_additions.sql"
         ;;
-    search-db)
+    db)
         shift
         if [[ -n "${*}" ]]; then
             echo "Matches for '${*}':"
