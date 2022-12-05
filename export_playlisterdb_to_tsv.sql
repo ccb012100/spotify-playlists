@@ -4,7 +4,7 @@
 .mode tabs
 .output starredmusic.tsv
 
-select art.name as artists, a.name as album, a.total_tracks as tracks, substr(a.release_date, 1, 4) as release_date, pt.added_at from Album a
+select art.name as artists, a.name as album, a.total_tracks as tracks, substr(a.release_date, 1, 4) as release_date, pt.added_at, p.name as playlist from Album a
 join albumartist aa on aa.album_id = a.id
 join artist art on art.id = aa.artist_id
 join track t on t.album_id = a.id

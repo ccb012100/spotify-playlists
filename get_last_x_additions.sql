@@ -4,7 +4,7 @@
 .mode tabs
 
 select * from
-(select art.name, a.name, a.total_tracks, substr(a.release_date, 1, 4), pt.added_at from Album a
+(select art.name, a.name, a.total_tracks, substr(a.release_date, 1, 4), pt.added_at, p.name from Album a
 join albumartist aa on aa.album_id = a.id
 join artist art on art.id = aa.artist_id
 join track t on t.album_id = a.id
