@@ -11,7 +11,7 @@ join track t on t.album_id = a.id
 join playlisttrack pt on pt.track_id = t.id
 join playlist p on p.id = pt.playlist_id
 where p.name like 'starred%'
-group by pt.added_at
+group by pt.added_at, art.id
 order by pt.added_at DESC
 limit CAST(:limit as NUMBER))
 order by added_at;
