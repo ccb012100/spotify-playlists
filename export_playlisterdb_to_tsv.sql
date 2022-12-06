@@ -11,7 +11,7 @@ join track t on t.album_id = a.id
 join playlisttrack pt on pt.track_id = t.id
 join playlist p on p.id = pt.playlist_id
 where p.name like 'starred%'
-group by a.id
+group by a.id, p.id
 order by pt.added_at;
 
 .output stdout
