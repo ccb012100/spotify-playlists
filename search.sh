@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+
 
 function sm() {
     case $1 in
