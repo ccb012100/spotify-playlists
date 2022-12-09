@@ -40,11 +40,13 @@ def get_last_album_added(spreadsheet):
 
             last_line = f.readline().decode()
 
-            print_info('last album added to ' + spreadsheet + ':\n---\n' + last_line + '\n')
+            print_info('last album added to ' + spreadsheet +
+                       ':\n---\n' + last_line + '\n')
 
             return last_line.rstrip()  # trim trailing newline
         except OSError:
             f.seek(0)
+
 
 def create_sqlite_connection(db_file):
     """
@@ -69,8 +71,13 @@ def row_to_tsv(row):
 
 def add_albums(spreadsheet, albums):
     if albums:
-        print_info('adding to  ' + spreadsheet + ':\n---\n' + '\n'.join(albums) + '\n')
-        # TODO: write to file
+        data_to_write = '\n'.join(albums)
+        print_info('adding to  ' + spreadsheet +
+                   ':\n---\n' + data_to_write + '\n')
+
+        with open(spreadsheet, 'a') as f:  # open in append mode
+            f.write(data_to_write)
+
         print_success('Success: added ' + str(len(albums)) + ' albums!')
     else:
         print_error('Error: entries collection was empty!')
