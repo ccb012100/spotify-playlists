@@ -36,7 +36,7 @@ def get_last_album_added(spreadsheet):
             while f.read(1) != b'\n':
                 f.seek(-2, os.SEEK_CUR)
 
-            last_line = f.readline().decode().rstrip()  # trim trailing newline
+            last_line = f.readline().decode().rstrip()  # trim trailing newline to be safe
 
             print_info(
                 'last album added to {}:\n--\n{}\n'.format(spreadsheet, last_line))
@@ -69,9 +69,9 @@ def row_to_tsv(row):
 
 def add_albums(spreadsheet, albums):
     if albums:
-        data_to_write = '\n'.join(albums)
+        data_to_write = '\n' + '\n'.join(albums)
         print_info('adding to  ' + spreadsheet +
-                   ':\n---\n' + data_to_write + '\n')
+                   ':\n---' + data_to_write + '\n')
 
         with open(spreadsheet, 'a') as f:  # open in append mode
             f.write(data_to_write)
