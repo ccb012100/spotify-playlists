@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from colorama import Fore, Style
+from enum import Enum
 from pathlib import Path
 from urllib.request import pathname2url
 import os
@@ -82,20 +83,34 @@ def add_albums(spreadsheet, albums):
         sys.exit()
 
 
+Message_Level = Enum('Message_Level', ['ERROR', 'SUCCESS', 'WARNING', 'INFO'])
+
+
 def print_error(message):
-    print(Fore.RED + Style.BRIGHT + message + Style.RESET_ALL)
+    print_message(Message_Level.ERROR, message)
 
 
 def print_success(message):
-    print(Fore.GREEN + Style.BRIGHT + message + Style.RESET_ALL)
+    print_message(Message_Level.SUCCESS, message)
 
 
 def print_warning(message):
-    print(Fore.YELLOW + Style.BRIGHT + message + Style.RESET_ALL)
+    print_message(Message_Level.WARNING, message)
 
 
 def print_info(message):
-    print(Fore.BLUE + Style.BRIGHT + message + Style.RESET_ALL)
+    print_message(Message_Level.INFO, message)
+
+
+def print_message(message_level, message):
+    message_level_colors = {
+        Message_Level.ERROR: Fore.RED + Style.BRIGHT,
+        Message_Level.SUCCESS: Fore.GREEN + Style.BRIGHT,
+        Message_Level.WARNING: Fore.YELLOW,
+        Message_Level.INFO: Fore.BLUE,
+    }
+
+    print(message_level_colors.get(message_level, '') + message + Style.RESET_ALL)
 
 
 last_added = get_last_album_added(spreadsheet)
