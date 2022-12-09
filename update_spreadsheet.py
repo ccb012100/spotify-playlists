@@ -8,8 +8,8 @@ import sqlite3
 import sys
 
 # assumes it's hosted in the same repo as this script
-spreadsheet = os.path.abspath(os.path.dirname(
-    __file__)) + '/' + 'starredmusic.tsv'
+spreadsheet = '{}/{}'.format(os.path.abspath(os.path.dirname(
+    __file__)), 'starredmusic.tsv')
 
 sql_db = str(Path.home() / 'playlister.db')
 
@@ -24,8 +24,6 @@ group by pt.added_at, art.id
 order by pt.added_at DESC
 limit ? OFFSET ?'''
 
-# TODO: use format strings instead of concatenating
-
 
 def get_last_album_added(spreadsheet):
     """"
@@ -38,12 +36,12 @@ def get_last_album_added(spreadsheet):
             while f.read(1) != b'\n':
                 f.seek(-2, os.SEEK_CUR)
 
-            last_line = f.readline().decode()
+            last_line = f.readline().decode().rstrip()  # trim trailing newline
 
-            print_info('last album added to ' + spreadsheet +
-                       ':\n---\n' + last_line + '\n')
+            print_info(
+                'last album added to {}:\n--\n{}\n'.format(spreadsheet, last_line))
 
-            return last_line.rstrip()  # trim trailing newline
+            return last_line
         except OSError:
             f.seek(0)
 
@@ -78,9 +76,9 @@ def add_albums(spreadsheet, albums):
         with open(spreadsheet, 'a') as f:  # open in append mode
             f.write(data_to_write)
 
-        print_success('Success: added ' + str(len(albums)) + ' albums!')
+        print_success('Success: added {} albums!'.format(str(len(albums))))
     else:
-        print_error('Error: entries collection was empty!')
+        print_error('Error: entries collection was empty')
         sys.exit()
 
 
