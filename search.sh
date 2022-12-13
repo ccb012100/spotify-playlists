@@ -75,7 +75,7 @@ function sm() {
             echo >&2 "$ERROR"
             return 1
         fi
-        echo "search for '$1':"
+        echo "search for '$*':"
         rg -i "${*}" "$REPO/starredmusic.tsv" |
             awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) } END{print "----\n" NR " matches"}' | sort | column -t -s $'\t'
         ;;
