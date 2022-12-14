@@ -77,7 +77,16 @@ function sm() {
         fi
         echo "search for '$*':"
         rg -i "${*}" "$REPO/starredmusic.tsv" |
-            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) } END{print "----\n" NR " matches"}' | sort | column -t -s $'\t'
+            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) } END{print "----\n" NR " matches"}' | sort | column --table --separator $'\t' --output-separator $'\t'
         ;;
     esac
+}
+
+function sm_sort_by_release() {
+    if [ -p /dev/stdin ]; then
+        sort -t $'\t' -k 4,4 -n </dev/stdin
+
+    else
+        echo "Error: no input was found on stdin"
+    fi
 }
