@@ -1,0 +1,26 @@
+-- list albums in starred playlists by (playlist_id, album_id) pairing, sorted by album_id, playlist_id
+-- sqlite3 --readonly "$HOME/playlister.db" ".read get_starred_albums.sql"
+
+.headers on
+.mode csv
+.output starred_playlist_albums.csv
+
+select a.id AS album_id
+    , art.name AS artists
+    , a.name AS album
+    , a.total_tracks AS tracks
+    , substr(a.release_date, 1, 4) AS release_date
+    , substr(pt.added_at, 1, 10) AS added_at
+    , p.name AS playlist
+from Album a
+    JOIN albumartist aa ON aa.album_id = a.id
+    JOIN artist art ON art.id = aa.artist_id
+    JOIN track t ON t.album_id = a.id
+    JOIN playlisttrack pt ON pt.track_id = t.id
+    JOIN playlist p ON p.id = pt.playlist_id
+where p.name like 'starred%'
+group by p.id, a.id
+order by a.id, p.id;
+
+.output stdout
+.headers off

@@ -31,7 +31,7 @@ function __sm_format_matches() {
 function __sm_sort() {
     if [ -p /dev/stdin ]; then
         sort -t $'\t' -k "$1","$1" </dev/stdin |
-            awk '{ print } END { print "\n\t" NR " matches" }'
+            awk '{ print } END { print "\n\t" NR " match(es)" }'
     else
         echo "Error: no input was found on stdin"
     fi
@@ -54,7 +54,7 @@ function __sm_search() {
         echo >&2 "$ERROR"
         return 1
     fi
-    rg -i "${*}" "$SM_REPO/starredmusic.tsv"
+    rg -i "${*}" "$SM_REPO/albums.tsv"
 }
 function __sm_default_search() {
     # sort by album title
@@ -82,7 +82,7 @@ function sm() {
         else
             [[ -n "${*}" ]]
             echo "Matches for '${*}':"
-            sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/search_playlister_db.sql"
+            sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/search_playlister_db.sql"
         fi
         ;;
         # search tsv file and sort by release date
@@ -92,7 +92,7 @@ function sm() {
         if [[ -n "$2" ]] && [[ "$2" -gt 0 ]]; then
             limit=$2
         fi
-        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read get_last_x_additions.sql"
+        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sql"
         ;;
         # update tsv file manually
     rs)

@@ -2,7 +2,7 @@
 
 .headers on
 .mode tabs
-.output starredmusic.tsv
+.output albums.tsv
 
 select GROUP_CONCAT(artist, '; ') as artists, album, track_count, release_date, added_at, playlist
 from
