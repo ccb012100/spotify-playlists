@@ -10,7 +10,7 @@ import sys
 
 # assumes it's hosted in the same repo as this script
 spreadsheet = '{}/{}'.format(os.path.abspath(os.path.dirname(
-    __file__)), 'starredmusic.tsv')
+    __file__)), 'albums.tsv')
 
 sql_db = str(Path.home() / 'playlister.db')
 
