@@ -121,7 +121,6 @@ sql_cur = sql_conn.cursor()
 limit = 50
 offset = 0
 
-# while True:
 sql_cur.execute(sql_query, [limit, offset])
 db_row = sql_cur.fetchall()
 
