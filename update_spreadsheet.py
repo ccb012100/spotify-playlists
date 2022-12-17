@@ -14,6 +14,7 @@ spreadsheet = '{}/{}'.format(os.path.abspath(os.path.dirname(
 
 sql_db = str(Path.home() / 'playlister.db')
 
+# TODO: need to group concat artists so there isn't 1 entry per album artist
 sql_query = '''select art.name, a.name, a.total_tracks, substr(a.release_date, 1, 4), pt.added_at, p.name from Album a
 join albumartist aa on aa.album_id = a.id
 join artist art on art.id = aa.artist_id
