@@ -87,7 +87,7 @@ Message_Level = Enum('Message_Level', ['ERROR', 'SUCCESS', 'WARNING', 'INFO'])
 
 
 def print_error(message):
-    print_message(Message_Level.ERROR, message)
+    print_message(Message_Level.ERROR, 'ERROR: ' + message)
 
 
 def print_success(message):
@@ -95,7 +95,7 @@ def print_success(message):
 
 
 def print_warning(message):
-    print_message(Message_Level.WARNING, message)
+    print_message(Message_Level.WARNING, 'WARNING: ' + message)
 
 
 def print_info(message):
@@ -147,4 +147,4 @@ if sql_conn:
 else:
     print_warning('connection was already closed')
 
-print_error('Error: was unable to find the last entry in the database')
+print_error('was unable to find the last entry in the database')
