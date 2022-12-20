@@ -6,6 +6,7 @@
 
     USAGE: ./search.py SEARCH_TERM
 '''
+from copy import deepcopy
 from colorama import Fore, Style
 from enum import Enum
 from pathlib import Path
@@ -15,36 +16,29 @@ import os
 import sqlite3
 import sys
 
-# assumes it's hosted in the same repo as this script
-spreadsheet = '{}/{}'.format(os.path.abspath(os.path.dirname(
-    __file__)), 'starredmusic.tsv')
-
 sql_db = str(Path.home() / 'playlister.db')
 
 
 class Columns:
-    added_at = 'added_at'
+    added = 'added'
     album = 'album'
     album_id = 'album_id'
     artists = 'artists'
     playlist = 'playlist'
     playlist_id = 'playlist_id'
-    release_date = 'release_date'
+    released = 'released'
     single_artist = 'artist'
     track_artists = 'track_artists'
     tracks = 'tracks'
 
 
 def get_sqlite_cursor(db_file: str) -> sqlite3.Cursor:
-    """
-    :return: cursor object
-    """
-
     try:
         # open in read-only mode; will fail if db_file doesn't exist
         connection = sqlite3.connect(
             f'file:{pathname2url((db_file))}?mode=ro', uri=True)
         connection.row_factory = sqlite3.Row
+
         return connection.cursor()
     except sqlite3.Error as e:
         print_error(str(e))
@@ -55,7 +49,7 @@ Message_Level = Enum('Message_Level', ['ERROR', 'SUCCESS', 'WARNING', 'INFO'])
 
 
 def print_error(message: str):
-    print_message(Message_Level.ERROR, message)
+    print_message(Message_Level.ERROR, f'ERROR: {message}')
 
 
 def print_success(message: str):
@@ -82,8 +76,7 @@ def print_message(message_level, message: str):
 
 
 def create_album_dict(db_rows: list) -> dict:
-    ''' Create dict in the form { album_id: { album } }
-    '''
+    ''' Create dict in the form { album_id: { album } } '''
     albums = {}
 
     for row in db_rows:
@@ -110,26 +103,50 @@ def search_by_album_artist(cursor: sqlite3.Cursor, search_term: str, trackartist
     return create_album_dict(cursor.fetchall())
 
 
-def merge_album_data(trackartist_albums: dict, albumartist_albums: dict) -> list:
-    albums = []
+def merge_album_data(track_matches: dict, albums: dict) -> list:
+    ''' Add track artist data from `trackartists_albums` to `albumartist_albums` '''
+    merged_albums = []
 
-    for a_album in albumartist_albums:
-        album = albumartist_albums[a_album]
+    for album_id in albums:
+        album = deepcopy(albums[album_id])
         artists = [a.strip() for a in album[Columns.artists].split(';')]
-        t_album = trackartist_albums[a_album]
+
+        if album_id not in track_matches:
+            continue
+
+        t_album = track_matches[album_id]
+
         track_artists = [t.strip()
                          for t in t_album[Columns.track_artists].split(';')]
 
         album[Columns.track_artists] = '; '.join(
             [t for t in track_artists if t not in artists])
 
-        albums.append(album)
+        merged_albums.append(album)
 
-    return albums
+    return merged_albums
 
 
 def print_results(albums: list) -> None:
-    print(tabulate(albums, headers="keys"))
+    if not albums:
+        print_warning("\n\tThere were 0 matches")
+        return
+
+    headers = [
+        Columns.artists,
+        Columns.track_artists,
+        Columns.album,
+        Columns.tracks,
+        Columns.released,
+        Columns.playlist,
+        Columns.added
+    ]
+
+    print()
+    # reorder columns
+    # see: https://github.com/astanin/python-tabulate/issues/40#issuecomment-595225936
+    print(tabulate([[a.get(k, 0) for k in headers] for a in albums], headers=headers,
+          maxcolwidths=[30, 30, 30, 10, 10, 30, 12], tablefmt='simple_grid'))
 
 
 track_artist_query = f'''SELECT
@@ -149,22 +166,25 @@ GROUP by album_id
 '''
 
 
-def build_album_artist_query(albums: dict):
+def build_album_artist_query(albums: dict, order_by: str = ''):
+    if not order_by:
+        order_by = f'{Columns.artists},{Columns.album}'
+
     return f'''SELECT {Columns.album_id}
     , GROUP_CONCAT(artist, '; ') AS {Columns.artists}
     , {Columns.album}
     , {Columns.tracks}
-    , {Columns.release_date}
+    , {Columns.released}
     , {Columns.playlist}
-    , {Columns.added_at}
+    , {Columns.added}
     , {Columns.playlist_id}
 FROM (SELECT alb.id AS {Columns.album_id}
         , art.name as {Columns.single_artist}
         , alb.name as {Columns.album}
         , alb.total_tracks as {Columns.tracks}
-        , substr(alb.release_date, 1, 4) as {Columns.release_date}
+        , substr(alb.release_date, 1, 4) as {Columns.released}
         , p.name as {Columns.playlist}
-        , substr(pt.added_at, 1, 10) as {Columns.added_at}
+        , substr(pt.added_at, 1, 10) as {Columns.added}
         , p.id as {Columns.playlist_id}
     FROM AlbumArtist aa
     JOIN Artist art on art.id = aa.artist_id
@@ -174,26 +194,40 @@ FROM (SELECT alb.id AS {Columns.album_id}
     JOIN Playlist p on p.id = pt.playlist_id
     WHERE art.name LIKE format('%%%s%%', ?) OR alb.id in ({','.join(["?" for _ in albums])})
     GROUP by p.id, art.id, alb.id)
-GROUP by playlist_id, album_id;'''
+GROUP by playlist_id, album_id
+ORDER by {order_by};'''
 
 
-def main():
-    search_term = ' '.join(sys.argv[1:]).strip()
+def parse_search_term(args: list[str]) -> str:
+    search_term = ' '.join(args).strip()
 
     if not search_term:
         print_error("you must provide a search term")
         exit()
 
-    print_info(f'Searching for "{search_term}"')
+    return search_term
+
+
+def main():
+    search_term = parse_search_term(sys.argv[1:])
+
+    if not search_term:
+        print_error("you must provide a search term")
+        exit()
+
+    print_info(f'\n\tSearching for "{search_term}":')
 
     cursor = get_sqlite_cursor(str(Path.home() / 'playlister.db'))
+
     # TODO: get _all_ track artists for the matching albums, not just the artists that match the search term
-    trackartist_albums = search_by_track_artist(cursor, search_term)
-    albums = search_by_album_artist(cursor, search_term, trackartist_albums)
+    track_matches = search_by_track_artist(cursor, search_term)
 
-    merged_albums = merge_album_data(trackartist_albums, albums)
+    albums = search_by_album_artist(cursor, search_term, track_matches)
 
-    print_results(merged_albums)
+    print_results(merge_album_data(track_matches, albums))
+
+    if albums:
+        print_info(f'\n\t{len(albums)} match(es)')
 
 
 if __name__ == "__main__":
