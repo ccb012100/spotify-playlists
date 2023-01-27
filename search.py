@@ -246,7 +246,7 @@ def _print_results(albumlist: list[Album], searchinfo: SearchInfo) -> None:
     else:
         _print_table(albumlist, searchinfo.pager)
 
-
+# TODO: finish implementing
 def _print_tree(albumlist: list[Album], sort: Sort) -> None:
     '''
         artist
@@ -412,7 +412,7 @@ def _parse_input() -> SearchInfo:
                         help='pipe results to pager')
 
     parser.add_argument('--tree', action='store_true',
-                        help='display results as a tree')
+                        help='display results as a tree. WARNING: still a WIP')
 
     args = parser.parse_args()
 
