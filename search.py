@@ -69,6 +69,7 @@ class SearchInfo:
     reverse: bool
     pager: bool
     tree: bool
+    no_format: bool
 
     def __init__(self, *,
                  term: str,
@@ -76,7 +77,8 @@ class SearchInfo:
                  sort: Literal['album', 'artist', 'released', 'added', 'playlist', 'track_artist'],
                  reverse: bool,
                  pager: bool,
-                 tree: bool
+                 tree: bool,
+                 no_format: bool
                  ) -> None:
         self.type = type
         self.term = term
@@ -84,6 +86,7 @@ class SearchInfo:
         self.reverse = reverse
         self.pager = pager
         self.tree = tree
+        self.no_format = no_format
 
 
 def _print_error(message: str) -> None:
@@ -184,11 +187,13 @@ def _format_albums_for_table(albums: dict[str, DbAlbum], searchinfo: SearchInfo)
     '''
     merged = []
 
+    separator = '; ' if searchinfo.no_format else '\n'
+
     for id in albums:
         album = albums[id]
         formatted = {k: album[k] for k in album.keys() if k != ALBUM_ID}
-        formatted[ARTIST] = '\n'.join(album[ARTIST])
-        formatted[TRACK_ARTIST] = '\n'.join(album[TRACK_ARTIST])
+        formatted[ARTIST] = separator.join(album[ARTIST])
+        formatted[TRACK_ARTIST] = separator.join(album[TRACK_ARTIST])
         merged.append(formatted)
 
     return sorted(merged, key=operator.itemgetter(*_sort_key(searchinfo.sort)), reverse=(searchinfo.reverse))
@@ -241,13 +246,24 @@ def _print_results(albumlist: list[Album], searchinfo: SearchInfo) -> None:
         _print_error("[red]There were 0 matches")
         return
 
-    if searchinfo.tree:
-        _print_tree(albumlist, searchinfo.sort)
+    if searchinfo.no_format:
+        _print_tsv(albumlist)
+    elif searchinfo.tree:
+        _print_tree(albumlist)
     else:
         _print_table(albumlist, searchinfo.pager)
 
-# TODO: finish implementing
-def _print_tree(albumlist: list[Album], sort: Sort) -> None:
+
+def _print_tsv(albumlist: list[Album]) -> None:
+    for a in albumlist:
+        Console().print(
+            '\t'.join([
+                a['artist'], a['track_artist'], a['album'], str(a['tracks']), a['released'], a['playlist'], a['added']]))
+    return
+
+
+def _print_tree(albumlist: list[Album]) -> None:
+    # TODO: finish implementing
     '''
         artist
             |_ title
@@ -414,6 +430,8 @@ def _parse_input() -> SearchInfo:
     parser.add_argument('--tree', action='store_true',
                         help='display results as a tree')
 
+    parser.add_argument('--no-format', action='store_true',
+                        help='display in TSV format instead of a table')
 
     args = parser.parse_args()
 
@@ -423,7 +441,8 @@ def _parse_input() -> SearchInfo:
         _print_error('Search term must be at least 3 characters')
         sys.exit(1)
 
-    return SearchInfo(term=searchterm, type=args.type, sort=args.sort, reverse=args.reverse, pager=args.pager, tree=args.tree)
+    return SearchInfo(term=searchterm, type=args.type, sort=args.sort, reverse=args.reverse, pager=args.pager,
+                      tree=args.tree, no_format=args.no_format)
 
 
 def _search(cursor, searchinfo: SearchInfo) -> dict[str, DbAlbum]:
