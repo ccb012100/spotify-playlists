@@ -253,8 +253,8 @@ def _print_tree(albumlist: list[Album], sort: Sort) -> None:
             |_ title
     '''
     albums = iter(albumlist)
-    # Console().print(tree_iterative(albums), style='purple')
-    Console().print(tree_recursive('', next(albums), next(albums), Tree('Results'), albums))
+    Console().print(tree_iterative(albums), style='purple')
+    # Console().print(tree_recursive('', next(albums), next(albums), Tree('Results'), albums))
 
 
 def tree_iterative(albums: Iterator[Album]) -> Tree:
@@ -412,7 +412,8 @@ def _parse_input() -> SearchInfo:
                         help='pipe results to pager')
 
     parser.add_argument('--tree', action='store_true',
-                        help='display results as a tree. WARNING: still a WIP')
+                        help='display results as a tree')
+
 
     args = parser.parse_args()
 
