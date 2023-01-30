@@ -72,7 +72,7 @@ function sm() {
         shift
         __sm_default_search "${*}"
         ;;
-    # search sqlite DB
+    # search sqlite DB on artist/album name
     db)
         shift
         ERROR="$(__sm_validate_search_term "${*}")"
@@ -85,7 +85,19 @@ function sm() {
             sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/search_playlister_db.sql"
         fi
         ;;
-        # search tsv file and sort by release date
+    # search sqlite DB on song titles
+    song)
+        shift
+        ERROR="$(__sm_validate_search_term "${*}")"
+        if [[ -n "$ERROR" ]]; then
+            echo >&2 "$ERROR"
+            return 1
+        else
+            [[ -n "${*}" ]]
+            echo "Tracks matching '${*}':"
+            sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sql"
+        fi
+        ;;
     # get last N albums added to starred Spotify playlists
     last)
         limit=10 # default to 10
