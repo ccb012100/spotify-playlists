@@ -156,3 +156,6 @@ function sm() {
         ;;
     esac
 }
+
+alias smdb='sm sync db'
+alias smtsv='sm sync tsv'
