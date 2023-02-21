@@ -209,7 +209,7 @@ def _sort_key(sort: Sort) -> list[str]:
             return [PLAYLIST]
         case 'track_artist':
             return [TRACK_ARTIST]
-        case 'released':
+        case 'released' | 'date':
             return [RELEASED]
         case 'added':
             return [ADDED]
@@ -418,7 +418,8 @@ def _parse_input() -> SearchInfo:
         '-t', '--type', choices=[ALBUM, ARTIST], default=ARTIST, help='the values to search against')
 
     parser.add_argument(
-        '-s', '--sort', choices=[ALBUM, ARTIST, PLAYLIST, RELEASED, ADDED, TRACK_ARTIST], default=ARTIST,
+        # 'date' is an alias for 'released'
+        '-s', '--sort', choices=[ALBUM, ARTIST, PLAYLIST, RELEASED, ADDED, TRACK_ARTIST, 'date'], default=ARTIST,
         help='the value to sort on')
 
     parser.add_argument('-r', '--reverse',
