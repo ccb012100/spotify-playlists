@@ -137,7 +137,7 @@ function sm() {
         case $2 in
         # sync sqlite db
         db)
-            dotnet run --project "$HOME/ccb012100/playlister/Playlister.csproj"
+            dotnet run --project "$HOME/ccb012100/playlister/Playlister.csproj" --configuration Release
             ;;
             # sync tsv file
         tsv)
