@@ -159,3 +159,4 @@ function sm() {
 
 alias smdb='sm sync db'
 alias smtsv='sm sync tsv'
+alias smsync='sm sync db && sm sync tsv'
