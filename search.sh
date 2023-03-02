@@ -112,7 +112,7 @@ function sm() {
         ;;
     sort)
         shift
-        echo -e "\tSearch for '${@:2}':\n"
+        echo -e "\tSearch for '" "${@:2}" "':\n"
         case $1 in
         date)
             shift
