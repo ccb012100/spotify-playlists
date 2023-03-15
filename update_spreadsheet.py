@@ -48,7 +48,7 @@ def get_last_album_added(spreadsheet):
             last_line = f.readline().decode().rstrip()  # trim trailing newline to be safe
 
             print_info(
-                'last album added to {}:\n--\n{}\n'.format(spreadsheet, last_line))
+                'last album added to {}:\n>> {}\n'.format(spreadsheet, last_line))
 
             return last_line
         except OSError:
