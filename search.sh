@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -o pipefail
+set -o errexit
 
 # location of the repository this script is hosted in
 # source: https://stackoverflow.com/a/1482133
