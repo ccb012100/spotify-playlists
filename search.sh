@@ -61,6 +61,7 @@ function __sm_default_search() {
     __sm_search "${*}" | __sm_format_matches | __sm_sort_by_album
 }
 
+# TODO: use getopts to parse options
 function sm() {
     case $1 in
     # print usage info
