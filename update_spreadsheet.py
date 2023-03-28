@@ -47,8 +47,9 @@ def get_last_album_added(spreadsheet):
 
             last_line = f.readline().decode().rstrip()  # trim trailing newline to be safe
 
-            print_info(
-                'last album added to {}:\n>> {}\n'.format(spreadsheet, last_line))
+            print(Fore.MAGENTA
+                  + '\nlast album added to {}:\n\n>> {}\n'.format(spreadsheet, last_line)
+                  + Style.RESET_ALL)
 
             return last_line
         except OSError:
