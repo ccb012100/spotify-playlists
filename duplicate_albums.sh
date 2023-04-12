@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 
 sqlite3 --readonly "$HOME/playlister.db" ".read get_starred_albums.sql"
 # find duplicates and print every duplicate line
