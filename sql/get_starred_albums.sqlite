@@ -1,5 +1,5 @@
 -- list albums in starred playlists by (playlist_id, album_id) pairing, sorted by album_id, playlist_id
--- sqlite3 --readonly "$HOME/playlister.db" ".read get_starred_albums.sql"
+-- sqlite3 --readonly "$HOME/playlister.db" ".read get_starred_albums.sqlite"
 
 .headers on
 .mode csv

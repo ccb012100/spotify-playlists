@@ -96,7 +96,7 @@ song)
     else
         [[ -n "${*}" ]]
         echo "Tracks matching '${*}':"
-        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sql"
+        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sqlite"
     fi
     ;;
 # get last N albums added to starred Spotify playlists
@@ -105,7 +105,7 @@ last)
     if [[ -n "$2" ]] && [[ "$2" -gt 0 ]]; then
         limit=$2
     fi
-    sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sql"
+    sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sqlite"
     ;;
     # update tsv file manually
 rs)

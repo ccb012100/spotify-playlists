@@ -1,5 +1,5 @@
 -- search database by artist+album names
--- sqlite3 --readonly "$HOME/playlister.db" ".param set :term $term" ".read song_search.sql"
+-- sqlite3 --readonly "$HOME/playlister.db" ".param set :term $term" ".read song_search.sqlite"
 .headers on
 .mode columns
 
