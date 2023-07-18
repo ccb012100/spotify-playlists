@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 
 # location of the repository this script is hosted in
 # source: https://stackoverflow.com/a/1482133
