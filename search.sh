@@ -138,7 +138,7 @@ sync)
     case $2 in
     # sync sqlite db
     db)
-        dotnet run --project "$HOME/src/playlister/Playlister.csproj" --configuration Release
+        dotnet run --project "$HOME/src/playlister/Playlister/" --configuration Release
         ;;
         # sync tsv file
     tsv)
