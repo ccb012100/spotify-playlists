@@ -4,4 +4,7 @@ Used to search the playlist data from Spotify that I've synced to a local sqlite
 
 ## TODO
 
-- improve matching on sqlite queries so that accented characters match on their unaccented equivalents
+- [ ] improve matching on sqlite queries so that accented characters match on their unaccented equivalents
+- [ ] visualisation of database schema
+- [ ] export non-`starred` playlists
+- [ ] create version of `albums.tsv` sorted by artist
