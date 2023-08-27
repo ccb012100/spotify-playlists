@@ -142,7 +142,10 @@ sync)
         ;;
         # sync tsv file
     tsv)
+        # updates albums.tsv
         "$SM_REPO/update_spreadsheet.py"
+        # print header line and then sort remaining lines into sorted-albums.tsv
+        awk 'NR <2 { print; next } { print | "sort --ignore-case }' "$SM_REPO/albums.tsv" >|sorted-albums.tsv
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"
