@@ -4,6 +4,11 @@ set -euo pipefail
 # location of the repository this script is hosted in
 # source: https://stackoverflow.com/a/1482133
 SM_REPO=$(dirname -- "$(readlink -f -- "$0")")
+DB="$SM_REPO/playlister.db"
+PLAYLISTER="$HOME/src/playlister/Playlister/"
+PY_SCRIPT="$SM_REPO/update_spreadsheet.py"
+TSV="$SM_REPO/albums.tsv"
+SORTED_TSV="$SM_REPO/sorted-albums.tsv"
 
 function __sm_validate_search_term() {
     if [ ${#1} -eq 0 ]; then
@@ -55,7 +60,7 @@ function __sm_search() {
         echo >&2 "$ERROR"
         return 1
     fi
-    rg -i "${*}" "$SM_REPO/albums.tsv"
+    rg -i "${*}" "$SORTED_TSV"
 }
 function __sm_default_search() {
     # sort by album title
@@ -83,7 +88,7 @@ db)
     else
         [[ -n "${*}" ]]
         echo "Matches for '${*}':"
-        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/search_playlister_db.sql"
+        sqlite3 --readonly "$DB" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/search_playlister_db.sql"
     fi
     ;;
 # search sqlite DB on song titles
@@ -96,7 +101,7 @@ song)
     else
         [[ -n "${*}" ]]
         echo "Tracks matching '${*}':"
-        sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sqlite"
+        sqlite3 --readonly "$DB" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sqlite"
     fi
     ;;
 # get last N albums added to starred Spotify playlists
@@ -105,9 +110,8 @@ last)
     if [[ -n "$2" ]] && [[ "$2" -gt 0 ]]; then
         limit=$2
     fi
-    sqlite3 --readonly "$HOME/playlister.db" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sqlite"
+    sqlite3 --readonly "$DB" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sqlite"
     ;;
-    # update tsv file manually
 rs)
     starred_music_rs # binary located in ~/bin/
     ;;
@@ -138,14 +142,13 @@ sync)
     case $2 in
     # sync sqlite db
     db)
-        dotnet run --project "$HOME/src/playlister/Playlister/" --configuration Release
+        dotnet run --project "$PLAYLISTER" --configuration Release
         ;;
-        # sync tsv file
     tsv)
         # updates albums.tsv
-        "$SM_REPO/update_spreadsheet.py"
+        "$PY_SCRIPT"
         # print header line and then sort remaining lines into sorted-albums.tsv
-        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$SM_REPO/albums.tsv" >|sorted-albums.tsv
+        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$TSV" >|sorted-albums.tsv
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"
