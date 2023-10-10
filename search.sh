@@ -148,7 +148,7 @@ sync)
         # updates albums.tsv
         "$PY_SCRIPT"
         # print header line and then sort remaining lines into sorted-albums.tsv
-        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$TSV" >|$SORTED_TSV
+        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$TSV" >|"$SORTED_TSV"
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"
