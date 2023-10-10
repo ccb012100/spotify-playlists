@@ -7,8 +7,8 @@ SM_REPO=$(dirname -- "$(readlink -f -- "$0")")
 DB="$SM_REPO/playlister.db"
 PLAYLISTER="$HOME/src/playlister/Playlister/"
 PY_SCRIPT="$SM_REPO/update_spreadsheet.py"
-TSV="$SM_REPO/albums.tsv"
 SORTED_TSV="$SM_REPO/sorted-albums.tsv"
+TSV="$SM_REPO/albums.tsv"
 
 function __sm_validate_search_term() {
     if [ ${#1} -eq 0 ]; then
