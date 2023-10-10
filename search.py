@@ -23,6 +23,8 @@ import operator
 import sqlite3
 import sys
 
+db_file = "playlister.db"
+
 ADDED = 'added'
 ALBUM = 'album'
 ALBUM_ID = 'album_id'
@@ -465,7 +467,7 @@ def _search(cursor, searchinfo: SearchInfo) -> dict[str, DbAlbum]:
 
 
 def main() -> None:
-    _sql_db = str(Path.home() / 'playlister.db')
+    _sql_db = str(Path.home() / db_file)
 
     searchinfo = _parse_input()
 
