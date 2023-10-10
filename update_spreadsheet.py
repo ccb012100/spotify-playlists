@@ -8,14 +8,12 @@ import os
 import sqlite3
 import sys
 
+sql_db = str(Path.home() / "playlister.db")
+
 # assumes it's hosted in the same repo as this script
-spreadsheet = '{}/{}'.format(os.path.abspath(os.path.dirname(
-    __file__)), 'albums.tsv')
+spreadsheet = "{}/{}".format(os.path.abspath(os.path.dirname(__file__)), "albums.tsv")
 
-sql_db = str(Path.home() / 'playlister.db')
-
-# TODO: need to group concat artists so there isn't 1 entry per album artist
-sql_query = '''select GROUP_CONCAT(artist, '; ') as artists, album, track_count, release_date, added_at, playlist
+sql_query = """select GROUP_CONCAT(artist, '; ') as artists, album, track_count, release_date, added_at, playlist
 from
 (
     select art.name as artist, a.name as album, a.id as album_id, a.total_tracks as track_count, substr(a.release_date, 1, 4) as release_date, pt.added_at, p.name as playlist, p.id as playlist_id
@@ -31,25 +29,28 @@ from
 )
 group by album_id, playlist_id
 order by added_at DESC
-limit ? OFFSET ?'''
+limit ? OFFSET ?"""
 
 
 def get_last_album_added(spreadsheet):
-    """"
+    """ "
     :return: last album added in .tsv format
     """
-    with open(spreadsheet, 'rb') as f:
-
+    with open(spreadsheet, "rb") as f:
         try:  # catch OSError in case of a one line file
             f.seek(-2, os.SEEK_END)
-            while f.read(1) != b'\n':
+            while f.read(1) != b"\n":
                 f.seek(-2, os.SEEK_CUR)
 
-            last_line = f.readline().decode().rstrip()  # trim trailing newline to be safe
+            last_line = (
+                f.readline().decode().rstrip()
+            )  # trim trailing newline to be safe
 
-            print(Fore.MAGENTA
-                  + '\nlast album added to {}:\n\n>> {}\n'.format(spreadsheet, last_line)
-                  + Style.RESET_ALL)
+            print(
+                Fore.MAGENTA
+                + "\nlast album added to {}:\n\n>> {}\n".format(spreadsheet, last_line)
+                + Style.RESET_ALL
+            )
 
             return last_line
         except OSError:
@@ -63,7 +64,9 @@ def create_sqlite_connection(db_file):
 
     try:
         # open in read-only mode; will fail if db_file doesn't exist
-        return sqlite3.connect('file:{}?mode=ro'.format(pathname2url(db_file)), uri=True)
+        return sqlite3.connect(
+            "file:{}?mode=ro".format(pathname2url(db_file)), uri=True
+        )
     except sqlite3.Error as e:
         print_error(e)
         sys.exit()
@@ -73,30 +76,29 @@ def row_to_tsv(row):
     """
     Returns sql row converted to .tsv format
     """
-    tsv = '\t'.join([str(x) for x in row])
+    tsv = "\t".join([str(x) for x in row])
     return tsv
 
 
 def add_albums(spreadsheet, albums):
     if albums:
-        data_to_write = '\n' + '\n'.join(albums)
-        print_info('adding to  ' + spreadsheet +
-                   ':\n---' + data_to_write + '\n')
+        data_to_write = "\n" + "\n".join(albums)
+        print_info("adding to  " + spreadsheet + ":\n---" + data_to_write + "\n")
 
-        with open(spreadsheet, 'a') as f:  # open in append mode
+        with open(spreadsheet, "a") as f:  # open in append mode
             f.write(data_to_write)
 
-        print_success('Success: added {} albums!'.format(str(len(albums))))
+        print_success("Success: added {} albums!".format(str(len(albums))))
     else:
-        print_error('Error: entries collection was empty')
+        print_error("Error: entries collection was empty")
         sys.exit()
 
 
-Message_Level = Enum('Message_Level', ['ERROR', 'SUCCESS', 'WARNING', 'INFO'])
+Message_Level = Enum("Message_Level", ["ERROR", "SUCCESS", "WARNING", "INFO"])
 
 
 def print_error(message):
-    print_message(Message_Level.ERROR, 'ERROR: ' + message)
+    print_message(Message_Level.ERROR, "ERROR: " + message)
 
 
 def print_success(message):
@@ -104,7 +106,7 @@ def print_success(message):
 
 
 def print_warning(message):
-    print_message(Message_Level.WARNING, 'WARNING: ' + message)
+    print_message(Message_Level.WARNING, "WARNING: " + message)
 
 
 def print_info(message):
@@ -119,12 +121,12 @@ def print_message(message_level, message):
         Message_Level.INFO: Fore.BLUE,
     }
 
-    print(message_level_colors.get(message_level, '') + message + Style.RESET_ALL)
+    print(message_level_colors.get(message_level, "") + message + Style.RESET_ALL)
 
 
 last_added = get_last_album_added(spreadsheet)
 
-sql_conn = create_sqlite_connection(str(Path.home() / 'playlister.db'))
+sql_conn = create_sqlite_connection(sql_db)
 sql_cur = sql_conn.cursor()
 
 limit = 50
@@ -145,8 +147,7 @@ for row in db_row:
             new_entries.reverse()
             add_albums(spreadsheet, new_entries)
         else:
-            print_success(
-                'Nothing to add; the spreadsheet is already up to date!')
+            print_success("Nothing to add; the spreadsheet is already up to date!")
         sys.exit()
     else:
         new_entries.append(album)
@@ -154,6 +155,6 @@ for row in db_row:
 if sql_conn:
     sql_conn.close()
 else:
-    print_warning('connection was already closed')
+    print_warning("connection was already closed")
 
-print_error('was unable to find the last entry in the database')
+print_error("was unable to find the last entry in the database")
