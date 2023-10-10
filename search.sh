@@ -6,9 +6,9 @@ set -euo pipefail
 SM_REPO=$(dirname -- "$(readlink -f -- "$0")")
 DB="$SM_REPO/playlister.db"
 PLAYLISTER="$HOME/src/playlister/Playlister/"
-PY_SCRIPT="$SM_REPO/update_spreadsheet.py"
+PY_SCRIPT="$SM_REPO/update_starred_albums_tsv.py"
 SORTED_TSV="$SM_REPO/sorted-albums.tsv"
-TSV="$SM_REPO/albums.tsv"
+STARRED_TSV="$SM_REPO/starred_albums.tsv"
 
 function __sm_validate_search_term() {
     if [ ${#1} -eq 0 ]; then
@@ -148,7 +148,7 @@ sync)
         # updates albums.tsv
         "$PY_SCRIPT"
         # print header line and then sort remaining lines into sorted-albums.tsv
-        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$TSV" >|"$SORTED_TSV"
+        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$STARRED_TSV" >|"$SORTED_TSV"
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"

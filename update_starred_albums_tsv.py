@@ -11,7 +11,7 @@ import sys
 sql_db = str(Path.home() / "playlister.db")
 
 # assumes it's hosted in the same repo as this script
-spreadsheet = "{}/{}".format(os.path.abspath(os.path.dirname(__file__)), "albums.tsv")
+spreadsheet = "{}/{}".format(os.path.abspath(os.path.dirname(__file__)), "starred_albums.tsv")
 
 sql_query = """select GROUP_CONCAT(artist, '; ') as artists, album, track_count, release_date, added_at, playlist
 from
