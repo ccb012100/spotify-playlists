@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeou pipefail
 
-# location of the repository this script is hosted in
-# source: https://stackoverflow.com/a/1482133
 sm_repo=$(dirname -- "$(readlink -f -- "$0")")
+
 db="$HOME/playlister.db"
 playlister="$HOME/src/playlister/Playlister/"
 py_script="$sm_repo/update_starred_albums_tsv.py"
-sorted_tsv="$sm_repo/sorted-albums.tsv"
 sql_scripts_dir="$sm_repo"/sql
-starred_tsv="$sm_repo/starred_albums.tsv"
 
+# set $SM_TSV in the environment to override these
+starred_tsv="$sm_repo/starred_albums.tsv"
+sorted_tsv="$sm_repo/sorted-albums.tsv"
+
+function __sm_info() {
+    echo "${#}"
+}
+function __sm_error() {
+    echo "${#}"
+}
 function __sm_validate_search_term() {
     if [ ${#1} -eq 0 ]; then
         echo -e "Error: must provide search term\n"
@@ -26,11 +33,17 @@ function __sm_print_usage() {
     echo -e '\tsm db SEARCH_TERM'
     echo -e '\tsm last NUMBER'
     echo -e '\tsm sync [db | tsv] SEARCH_TERM'
+    echo -e '\nSet TSV_SM to specify the albums tsv to search'
 }
 function __sm_format_matches() {
     if [ -p /dev/stdin ]; then
-        awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) }' |
-            column --table --separator $'\t' --output-separator $'\t'
+        if [[ "${SM_TSV:-}" ]]; then
+            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10), $6 }' |
+                column --table --separator $'\t' --output-separator $'\t'
+        else
+            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) }' |
+                column --table --separator $'\t' --output-separator $'\t'
+        fi
     else
         echo "Error: no input was found on stdin"
     fi
@@ -61,11 +74,10 @@ function __sm_search() {
         echo >&2 "$error"
         return 1
     fi
-    rg -i "${*}" "$sorted_tsv"
+    rg -i "${*}" "${SM_TSV:-$sorted_tsv}"
 }
 function __sm_default_search() {
-    # sort by album title
-    __sm_search "${*}" | __sm_format_matches | __sm_sort_by_album
+    __sm_search "${*}" | __sm_format_matches
 }
 
 # TODO: use getopts to parse options
