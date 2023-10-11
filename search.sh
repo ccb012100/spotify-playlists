@@ -10,7 +10,7 @@ sql_scripts_dir="$sm_repo"/sql
 
 # set $SM_TSV in the environment to override these
 starred_tsv="$sm_repo/starred_albums.tsv"
-sorted_tsv="$sm_repo/sorted-albums.tsv"
+sorted_tsv="$sm_repo/sorted_albums.tsv"
 
 function __sm_info() {
     echo "${#}"
@@ -160,7 +160,7 @@ sync)
     tsv)
         # updates albums.tsv
         "$py_script"
-        # print header line and then sort remaining lines into sorted-albums.tsv
+        # print header line and then sort remaining lines into sorted_tsv
         awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
         sqlite3 --readonly "$db" ".param init" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
