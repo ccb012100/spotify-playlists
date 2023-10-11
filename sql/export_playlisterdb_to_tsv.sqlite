@@ -1,13 +1,18 @@
 -- sqlite3 ~/playlister.db ".read export_playlisterdb_to_tsv.sqlite"
-.headers on.mode tabs.output all_albums.tsv
-select GROUP_CONCAT(artist, '; ') as artists,
+.headers on
+.mode tabs
+.output all_albums.tsv
+
+select
+    GROUP_CONCAT(artist, '; ') as artists,
     album,
     track_count,
     release_date,
     added_at,
     playlist
 from (
-        select art.name as artist,
+        select
+            art.name as artist,
             a.name as album,
             a.id as album_id,
             a.total_tracks as track_count,
@@ -21,16 +26,11 @@ from (
             join track t on t.album_id = a.id
             join playlisttrack pt on pt.track_id = t.id
             join playlist p on p.id = pt.playlist_id
-        group by a.id,
-            art.id,
-            p.id
-        order by p.id,
-            art.name,
-            a.name
+        group by a.id, art.id, p.id
+        order by p.id, art.name, a.name
     )
-group by album_id,
-    playlist_id
-order by playlist,
-    artists,
-    album;
-.output stdout.headers off
+group by album_id, playlist_id
+order by playlist, artists, album;
+
+.output stdout
+.headers off

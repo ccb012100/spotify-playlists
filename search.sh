@@ -4,11 +4,11 @@ set -euo pipefail
 # location of the repository this script is hosted in
 # source: https://stackoverflow.com/a/1482133
 sm_repo=$(dirname -- "$(readlink -f -- "$0")")
-db="$sm_repo/playlister.db"
+db="$HOME/playlister.db"
 playlister="$HOME/src/playlister/Playlister/"
 py_script="$sm_repo/update_starred_albums_tsv.py"
 sorted_tsv="$sm_repo/sorted-albums.tsv"
-sql_scripts_dir=$"SM_REPO"/sql
+sql_scripts_dir="$sm_repo"/sql
 starred_tsv="$sm_repo/starred_albums.tsv"
 
 function __sm_validate_search_term() {
@@ -150,7 +150,7 @@ sync)
         "$py_script"
         # print header line and then sort remaining lines into sorted-albums.tsv
         awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
-        sqlite3 --readonly "$db" ".param init" ".read $sm_repo/sql/export_playlisterdb_to_tsv.sqlite"
+        sqlite3 --readonly "$db" ".param init" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"
