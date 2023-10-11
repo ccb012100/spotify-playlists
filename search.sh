@@ -3,12 +3,13 @@ set -euo pipefail
 
 # location of the repository this script is hosted in
 # source: https://stackoverflow.com/a/1482133
-SM_REPO=$(dirname -- "$(readlink -f -- "$0")")
-DB="$SM_REPO/playlister.db"
-PLAYLISTER="$HOME/src/playlister/Playlister/"
-PY_SCRIPT="$SM_REPO/update_starred_albums_tsv.py"
-SORTED_TSV="$SM_REPO/sorted-albums.tsv"
-STARRED_TSV="$SM_REPO/starred_albums.tsv"
+sm_repo=$(dirname -- "$(readlink -f -- "$0")")
+db="$sm_repo/playlister.db"
+playlister="$HOME/src/playlister/Playlister/"
+py_script="$sm_repo/update_starred_albums_tsv.py"
+sorted_tsv="$sm_repo/sorted-albums.tsv"
+sql_scripts_dir=$"SM_REPO"/sql
+starred_tsv="$sm_repo/starred_albums.tsv"
 
 function __sm_validate_search_term() {
     if [ ${#1} -eq 0 ]; then
@@ -55,12 +56,12 @@ function __sm_search() {
     # "${*}" will group all the args into a single quoted string, so we
     # don't have to wrap the search in quotes on the command line, e.g. we
     # can enter `sm Allman Brothers`` instead of `sm "Allman Brothers"`
-    ERROR="$(__sm_validate_search_term "${*}")"
-    if [[ -n "$ERROR" ]]; then
-        echo >&2 "$ERROR"
+    error="$(__sm_validate_search_term "${*}")"
+    if [[ -n "$error" ]]; then
+        echo >&2 "$error"
         return 1
     fi
-    rg -i "${*}" "$SORTED_TSV"
+    rg -i "${*}" "$sorted_tsv"
 }
 function __sm_default_search() {
     # sort by album title
@@ -81,27 +82,27 @@ verbatim)
 # search sqlite DB on artist/album name
 db)
     shift
-    ERROR="$(__sm_validate_search_term "${*}")"
-    if [[ -n "$ERROR" ]]; then
-        echo >&2 "$ERROR"
+    error="$(__sm_validate_search_term "${*}")"
+    if [[ -n "$error" ]]; then
+        echo >&2 "$error"
         return 1
     else
         [[ -n "${*}" ]]
         echo "Matches for '${*}':"
-        sqlite3 --readonly "$DB" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/search_playlister_db.sql"
+        sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/search_playlister_db.sql"
     fi
     ;;
 # search sqlite DB on song titles
 song)
     shift
-    ERROR="$(__sm_validate_search_term "${*}")"
-    if [[ -n "$ERROR" ]]; then
-        echo >&2 "$ERROR"
+    error="$(__sm_validate_search_term "${*}")"
+    if [[ -n "$error" ]]; then
+        echo >&2 "$error"
         return 1
     else
         [[ -n "${*}" ]]
         echo "Tracks matching '${*}':"
-        sqlite3 --readonly "$DB" ".param init" ".param set :term '${*}'" ".read $SM_REPO/sql/song_search.sqlite"
+        sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/song_search.sqlite"
     fi
     ;;
 # get last N albums added to starred Spotify playlists
@@ -110,7 +111,7 @@ last)
     if [[ -n "$2" ]] && [[ "$2" -gt 0 ]]; then
         limit=$2
     fi
-    sqlite3 --readonly "$DB" ".param init" ".param set :limit $limit" ".read $SM_REPO/sql/get_last_x_additions.sqlite"
+    sqlite3 --readonly "$db" ".param init" ".param set :limit $limit" ".read $sql_scripts_dir/get_last_x_additions.sqlite"
     ;;
 rs)
     starred_music_rs # binary located in ~/bin/
@@ -142,12 +143,13 @@ sync)
     case $2 in
     # sync sqlite db
     db)
-        dotnet run --project "$PLAYLISTER" --configuration Release
+        dotnet run --project "$playlister" --configuration Release
         ;;
     tsv)
         # updates albums.tsv
-        "$PY_SCRIPT"
+        "$py_script"
         # print header line and then sort remaining lines into sorted-albums.tsv
+        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
         awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$STARRED_TSV" >|"$SORTED_TSV"
         ;;
     *)
