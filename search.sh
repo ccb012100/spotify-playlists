@@ -150,7 +150,7 @@ sync)
         "$py_script"
         # print header line and then sort remaining lines into sorted-albums.tsv
         awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
-        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$STARRED_TSV" >|"$SORTED_TSV"
+        sqlite3 --readonly "$db" ".param init" ".read $sm_repo/sql/export_playlisterdb_to_tsv.sqlite"
         ;;
     *)
         echo "Error: you must use 'sync db' or 'sync tsv'"

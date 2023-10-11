@@ -1,9 +1,5 @@
--- sqlite3 ~/playlister.db ".read export_playlists_to_tsv.sqlite"
-
-.headers on
-.mode tabs
-.output albums.tsv
-
+-- sqlite3 ~/playlister.db ".read export_playlisterdb_to_tsv.sqlite"
+.headers on.mode tabs.output all_albums.tsv
 select GROUP_CONCAT(artist, '; ') as artists,
     album,
     track_count,
@@ -29,12 +25,12 @@ from (
             art.id,
             p.id
         order by p.id,
-            a.id,
-            art.name
+            art.name,
+            a.name
     )
 group by album_id,
     playlist_id
-order by added_at;
-
-.output stdout
-.headers off
+order by playlist,
+    artists,
+    album;
+.output stdout.headers off
