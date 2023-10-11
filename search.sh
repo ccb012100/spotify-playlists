@@ -9,6 +9,7 @@ py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
 # set $SM_TSV in the environment to override these
+all_albums_tsv="$sm_repo/albums/all_albums.tsv"
 starred_tsv="$sm_repo/albums/starred_albums.tsv"
 sorted_tsv="$sm_repo/albums/sorted_albums.tsv"
 
@@ -170,7 +171,7 @@ sync)
         "$py_script"
         # print header line and then sort remaining lines into sorted_tsv
         awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
-        sqlite3 --readonly "$db" ".param init" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
+        sqlite3 --readonly "$db" ".param init" ".output $all_albums_tsv" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
     *)
         __sm_error "Error: you must use 'sync db' or 'sync tsv'"
