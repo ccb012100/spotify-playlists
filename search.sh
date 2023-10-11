@@ -4,13 +4,13 @@ set -Eeou pipefail
 sm_repo=$(dirname -- "$(readlink -f -- "$0")")
 
 db="$HOME/playlister.db"
-playlister="$HOME/src/playlister/Playlister/"
-py_script="$sm_repo/update_starred_albums_tsv.py"
+playlister="$HOME/src/playlister/Playlister/" # TODO: use reference in ~/bin
+py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
 # set $SM_TSV in the environment to override these
-starred_tsv="$sm_repo/starred_albums.tsv"
-sorted_tsv="$sm_repo/sorted_albums.tsv"
+starred_tsv="$sm_repo/albums/starred_albums.tsv"
+sorted_tsv="$sm_repo/albums/sorted_albums.tsv"
 
 # ANSI colors
 blue='\033[0;34m'

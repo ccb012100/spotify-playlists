@@ -3,7 +3,7 @@
 
 .headers on
 .mode csv
-.output starred_playlist_albums.csv
+.output albums/starred_playlist_albums.csv
 
 select a.id AS album_id
     , art.name AS artists
