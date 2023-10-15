@@ -19,21 +19,21 @@ clearformat='\033[0m' # clear formatting
 orange='\033[0;33m'
 red='\033[0;31m'
 
-function __sm_info() {
+function info() {
     echo -e "${orange}${*}${clearformat}"
 }
-function __sm_error() {
+function error() {
     echo >&2 -e "${red}${*}${clearformat}"
 }
-function __sm_validate_search_term() {
+function validate_search_term() {
     if [ ${#1} -eq 0 ]; then
-        __sm_error -e "Error: must provide search term\n"
-        __sm_print_usage
+        error -e "Error: must provide search term\n"
+        print_usage
     elif [ ${#1} -lt 4 ]; then
-        __sm_error "Error: search term must be at least 4 chars"
+        error "Error: search term must be at least 4 chars"
     fi
 }
-function __sm_print_usage() {
+function print_usage() {
     echo -e 'USAGE:\n\tsm SEARCH_TERM'
     echo -e '\tsm sort [date | artist] SEARCH_TERM'
     echo -e '\tsm SEARCH_TERM'
@@ -42,7 +42,7 @@ function __sm_print_usage() {
     echo -e '\tsm sync [db | tsv] SEARCH_TERM'
     echo -e '\nSet TSV_SM to specify the albums tsv to search'
 }
-function __sm_format_matches() {
+function format_matches() {
     if [ -p /dev/stdin ]; then
         echo -e "${blue}" # set text to blue
         if [[ "${SM_TSV:-}" ]]; then
@@ -54,75 +54,75 @@ function __sm_format_matches() {
         fi
         echo -e "${clearformat}" # clear formatting
     else
-        __sm_error "Error: no input was found on stdin"
+        error "Error: no input was found on stdin"
     fi
 }
-function __sm_sort() {
+function sort() {
     if [ -p /dev/stdin ]; then
         sort -t $'\t' -k "$1","$1" </dev/stdin |
             awk '{ print } END { print "\n\t" NR " match(es)" }'
     else
-        __sm_error "Error: no input was found on stdin"
+        error "Error: no input was found on stdin"
     fi
 }
-function __sm_sort_by_release() {
-    __sm_sort 4
+function sort_by_release() {
+    sort 4
 }
-function __sm_sort_by_artist() {
-    __sm_sort 1
+function sort_by_artist() {
+    sort 1
 }
-function __sm_sort_by_album() {
-    __sm_sort 2
+function sort_by_album() {
+    sort 2
 }
-function __sm_search() {
+function search() {
     # "${*}" will group all the args into a single quoted string, so we
     # don't have to wrap the search in quotes on the command line, e.g. we
     # can enter `sm Allman Brothers`` instead of `sm "Allman Brothers"`
-    error="$(__sm_validate_search_term "${*}")"
+    error="$(validate_search_term "${*}")"
     if [[ -n "$error" ]]; then
-        __sm_error "$error"
+        error "$error"
         return 1
     fi
     rg -i "${*}" "${SM_TSV:-$sorted_tsv}"
 }
-function __sm_default_search() {
-    __sm_search "${*}" | __sm_format_matches
+function default_search() {
+    search "${*}" | format_matches
 }
 
 # TODO: use getopts to parse options
 case $1 in
 # print usage info
 -h | --help | help)
-    __sm_print_usage
+    print_usage
     ;;
 # pass through all args to default search
 verbatim)
     shift
-    __sm_default_search "${*}"
+    default_search "${*}"
     ;;
 # search sqlite DB on artist/album name
 db)
     shift
-    error="$(__sm_validate_search_term "${*}")"
+    error="$(validate_search_term "${*}")"
     if [[ -n "$error" ]]; then
-        __sm_error "$error"
+        error "$error"
         return 1
     else
         [[ -n "${*}" ]]
-        __sm_info "Matches for '${*}':"
+        info "Matches for '${*}':"
         sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/search_playlister_db.sql"
     fi
     ;;
 # search sqlite DB on song titles
 song)
     shift
-    error="$(__sm_validate_search_term "${*}")"
+    error="$(validate_search_term "${*}")"
     if [[ -n "$error" ]]; then
-        __sm_error "$error"
+        error "$error"
         return 1
     else
         [[ -n "${*}" ]]
-        __sm_info "Tracks matching '${*}':"
+        info "Tracks matching '${*}':"
         sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/song_search.sqlite"
     fi
     ;;
@@ -143,20 +143,20 @@ sort)
     case $1 in
     date)
         shift
-        __sm_search "${*}" | __sm_format_matches | __sm_sort_by_release
+        search "${*}" | format_matches | sort_by_release
         ;;
         # search tsv file and sort by artist
     artist)
         shift
-        __sm_search "${*}" | __sm_format_matches | __sm_sort_by_release
+        search "${*}" | format_matches | sort_by_release
         ;;
     album)
         shift
-        __sm_search "${*}" | __sm_format_matches | __sm_sort_by_album
+        search "${*}" | format_matches | sort_by_album
         ;;
     *)
-        __sm_info -e "'sort' must be followed by [date | artist]\n"
-        __sm_print_usage
+        info -e "'sort' must be followed by [date | artist]\n"
+        print_usage
         ;;
     esac
     ;;
@@ -174,14 +174,14 @@ sync)
         sqlite3 --readonly "$db" ".param init" ".output $all_albums_tsv" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
     *)
-        __sm_error "Error: you must use 'sync db' or 'sync tsv'"
+        error "Error: you must use 'sync db' or 'sync tsv'"
         return 1
         ;;
     esac
     ;;
 # search tsv file with default search
 *)
-    __sm_info "\t--Search for '${*}'--\n"
-    __sm_default_search "${*}"
+    info "\t--Search for '${*}'--\n"
+    default_search "${*}"
     ;;
 esac
