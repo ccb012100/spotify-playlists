@@ -4,7 +4,7 @@ set -Eeou pipefail
 sm_repo=$(dirname -- "$(readlink -f -- "$0")")
 
 db="$HOME/playlister.db"
-playlister="$HOME/src/playlister/Playlister/" # TODO: use reference in ~/bin
+playlister="$HOME/bin/playlister/Playlister/"
 py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
