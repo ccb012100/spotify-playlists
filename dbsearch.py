@@ -436,7 +436,7 @@ ORDER BY artist, track_artist, album, playlist
 
 def _parse_input() -> SearchInfo:
     parser = argparse.ArgumentParser(
-        prog="search.py",
+        prog="dbsearch.py",
         description="Search sqlite database containing Spotify playlist data",
     )
 
