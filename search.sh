@@ -42,30 +42,40 @@ function print_usage() {
     echo -e '\tsm db SEARCH_TERM'
     echo -e '\tsm last NUMBER'
     echo -e '\tsm sync [db | tsv] SEARCH_TERM'
-    echo -e '\nSet TSV_SM to specify the albums tsv to search'
+    echo -e '\nSet SM_TSV to specify the albums tsv to search'
+    echo -e '\nSet SM_JSON to output matches as JSON'
 }
 function print_table() {
-    # output as json (`--json`) if env var is set
     if [[ "${SM_JSON:-}" ]]; then
+        shopt -s nocasematch
         case $SM_JSON in
-        yes | Yes | y | Y | 1 | true | True | t | T)
-            json='--json'
-            ;;
-        *)
-            json=
+        YES | Y | TRUE | T | 1)
+            json='--json' # output as JSON
+            if [[ "${SM_TSV:-}" ]]; then
+                playlist_col='--table-column name=playlist,trunc,json=string'
+            else
+                playlist_col=
+            fi
+            # shellcheck disable=SC2086
+            column --table $json \
+                --table-name="matches for: $search_term" \
+                --separator $'\t' --output-separator $'    ' \
+                --table-column name=artist,trunc,json=string \
+                --table-column name=album,trunc,json=string \
+                --table-column name=tracks,json=number \
+                --table-column name=released,json=string \
+                --table-column name=added,json=string $playlist_col
+            exit 0
             ;;
         esac
+        shopt -u nocasematch
     fi
 
-    # truncate artists and album columns if necessary
-    # shellcheck disable=SC2086
-    column --table $json --table-name="matches for: $search_term" --separator $'\t' --output-separator $'    ' \
-        --table-column name=artist,trunc,json=string \
-        --table-column name=album,trunc,json=string \
-        --table-column name=tracks,json=number \
-        --table-column name=released,json=string \
-        --table-column name=added,json=string \
-        --table-column name=playlist,json=string
+    if [[ "${SM_TSV:-}" ]]; then # truncate artists,album,playlist columns
+        column --table --separator $'\t' --output-separator $'    ' --table-truncate 1,2,6
+    else # no playlist column to truncate
+        column --table --separator $'\t' --output-separator $'    ' --table-truncate 1,2
+    fi
 }
 function format_matches() {
     if [ -p /dev/stdin ]; then
