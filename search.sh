@@ -19,8 +19,10 @@ clearformat='\033[0m' # clear formatting
 orange='\033[0;33m'
 red='\033[0;31m'
 
+search_term=''
+
 function info() {
-    echo -e "${orange}${*}${clearformat}"
+    echo >&2 -en "${orange}${*}${clearformat}"
 }
 function error() {
     echo >&2 -e "${red}${*}${clearformat}"
@@ -42,17 +44,42 @@ function print_usage() {
     echo -e '\tsm sync [db | tsv] SEARCH_TERM'
     echo -e '\nSet TSV_SM to specify the albums tsv to search'
 }
+function print_table() {
+    # output as json (`--json`) if env var is set
+    if [[ "${SM_JSON:-}" ]]; then
+        case $SM_JSON in
+        yes | Yes | y | Y | 1 | true | True | t | T)
+            json='--json'
+            ;;
+        *)
+            json=
+            ;;
+        esac
+    fi
+
+    # truncate artists and album columns if necessary
+    # shellcheck disable=SC2086
+    column --table $json --table-name="matches for: $search_term" --separator $'\t' --output-separator $'    ' \
+        --table-column name=artist,trunc,json=string \
+        --table-column name=album,trunc,json=string \
+        --table-column name=tracks,json=number \
+        --table-column name=released,json=string \
+        --table-column name=added,json=string \
+        --table-column name=playlist,json=string
+}
 function format_matches() {
     if [ -p /dev/stdin ]; then
-        echo -e "${blue}" # set text to blue
+        [[ -t 1 ]] && echo -en "${blue}" # set text to blue if stdout is tty
+
         if [[ "${SM_TSV:-}" ]]; then
             awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10), $6 }' |
-                column --table --separator $'\t' --output-separator $'\t'
+                print_table
         else
             awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) }' |
-                column --table --separator $'\t' --output-separator $'\t'
+                print_table
         fi
-        echo -e "${clearformat}" # clear formatting
+
+        [[ -t 1 ]] && echo -en "${clearformat}" # clear formatting
     else
         error "Error: no input was found on stdin"
     fi
@@ -98,6 +125,7 @@ case $1 in
 # pass through all args to default search
 verbatim)
     shift
+    search_term="${*}"
     default_search "${*}"
     ;;
 # search sqlite DB on artist/album name
@@ -109,6 +137,7 @@ db)
         return 1
     else
         [[ -n "${*}" ]]
+        search_term="${*}"
         info "Matches for '${*}':"
         sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/search_playlister_db.sql"
     fi
@@ -122,6 +151,7 @@ song)
         return 1
     else
         [[ -n "${*}" ]]
+        search_term="${*}"
         info "Tracks matching '${*}':"
         sqlite3 --readonly "$db" ".param init" ".param set :term '${*}'" ".read $sql_scripts_dir/sql/song_search.sqlite"
     fi
@@ -134,24 +164,27 @@ last)
     fi
     sqlite3 --readonly "$db" ".param init" ".param set :limit $limit" ".read $sql_scripts_dir/get_last_x_additions.sqlite"
     ;;
-rs)
-    starred_music_rs # binary located in ~/bin/
-    ;;
+# rs)
+#     starred_music_rs # binary located in ~/bin/
+#     ;;
 sort)
     shift
     echo -e "\t--Search for '" "${@:2}" "'--\n"
     case $1 in
     date)
         shift
+        search_term="${*}"
         search "${*}" | format_matches | sort_by_release
         ;;
         # search tsv file and sort by artist
     artist)
         shift
+        search_term="${*}"
         search "${*}" | format_matches | sort_by_release
         ;;
     album)
         shift
+        search_term="${*}"
         search "${*}" | format_matches | sort_by_album
         ;;
     *)
@@ -182,6 +215,7 @@ sync)
 # search tsv file with default search
 *)
     info "\t--Search for '${*}'--\n"
+    search_term="${*}"
     default_search "${*}"
     ;;
 esac
