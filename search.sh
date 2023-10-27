@@ -44,6 +44,7 @@ function print_usage() {
     echo -e '\tsm sync [db | tsv] SEARCH_TERM'
     echo -e '\nSet SM_TSV to specify the albums tsv to search'
     echo -e '\nSet SM_JSON to output matches as JSON'
+    echo -e '\nSet SM_INCLUDE_PLAYLIST to include Playlist names in results'
 }
 function print_table() {
     if [[ "${SM_JSON:-}" ]]; then
@@ -51,7 +52,7 @@ function print_table() {
         case $SM_JSON in
         YES | Y | TRUE | T | 1)
             json='--json' # output as JSON
-            if [[ "${SM_TSV:-}" ]]; then
+            if [[ "${SM_TSV:-}" || "${SM_INCLUDE_PLAYLIST:-}" ]]; then
                 playlist_col='--table-column name=playlist,trunc,json=string'
             else
                 playlist_col=
@@ -71,7 +72,7 @@ function print_table() {
         shopt -u nocasematch
     fi
 
-    if [[ "${SM_TSV:-}" ]]; then # truncate artists,album,playlist columns
+    if [[ "${SM_TSV:-}" || "${SM_INCLUDE_PLAYLIST:-}" ]]; then # truncate artists,album,playlist columns
         column --table --separator $'\t' --output-separator $'    ' --table-truncate 1,2,6
     else # no playlist column to truncate
         column --table --separator $'\t' --output-separator $'    ' --table-truncate 1,2
@@ -81,7 +82,7 @@ function format_matches() {
     if [ -p /dev/stdin ]; then
         [[ -t 1 ]] && echo -en "${blue}" # set text to blue if stdout is tty
 
-        if [[ "${SM_TSV:-}" ]]; then
+        if [[ "${SM_TSV:-}" || "${SM_INCLUDE_PLAYLIST:-}" ]]; then
             awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10), $6 }' |
                 print_table
         else
