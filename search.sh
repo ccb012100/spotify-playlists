@@ -22,7 +22,7 @@ red='\033[0;31m'
 search_term=''
 
 function info() {
-    echo >&2 -en "${orange}${*}${clearformat}"
+    echo >&2 -e "${orange}${*}${clearformat}"
 }
 function error() {
     echo >&2 -e "${red}${*}${clearformat}"
