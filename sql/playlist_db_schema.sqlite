@@ -1,0 +1,119 @@
+CREATE TABLE IF NOT EXISTS "VersionInfo"(
+  "Version" INTEGER NOT NULL,
+  "AppliedOn" DATETIME,
+  "Description" TEXT
+);
+CREATE UNIQUE INDEX "UC_Version" ON "VersionInfo"("Version" ASC);
+CREATE TABLE IF NOT EXISTS "Playlist"(
+  "id" TEXT NOT NULL,
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "snapshot_id" TEXT,
+  "name" TEXT NOT NULL,
+  "collaborative" INTEGER NOT NULL,
+  "description" TEXT,
+  "public" INTEGER,
+  "count" INTEGER NOT NULL DEFAULT 0,
+  CONSTRAINT "PK_Playlist" PRIMARY KEY("id")
+);
+CREATE UNIQUE INDEX "IX_Playlist_snapshot_id" ON "Playlist"("snapshot_id" ASC);
+CREATE TABLE IF NOT EXISTS "Artist"(
+  "id" TEXT NOT NULL,
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "name" TEXT NOT NULL,
+  CONSTRAINT "PK_Artist" PRIMARY KEY("id")
+);
+CREATE TABLE IF NOT EXISTS "Album"(
+  "id" TEXT NOT NULL,
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "name" TEXT NOT NULL,
+  "total_tracks" INTEGER NOT NULL,
+  "album_type" TEXT,
+  "release_date" TEXT,
+  CONSTRAINT "PK_Album" PRIMARY KEY("id")
+);
+CREATE TABLE IF NOT EXISTS "Track"(
+  "id" TEXT NOT NULL,
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "name" TEXT NOT NULL,
+  "track_number" INTEGER NOT NULL,
+  "disc_number" INTEGER NOT NULL,
+  "duration_ms" INTEGER NOT NULL,
+  "album_id" TEXT NOT NULL,
+  CONSTRAINT "PK_Track" PRIMARY KEY("id"),
+  CONSTRAINT "fk_track_albumid" FOREIGN KEY("album_id") REFERENCES "Album"("id")
+);
+CREATE TABLE IF NOT EXISTS "PlaylistTrack"(
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "track_id" TEXT NOT NULL,
+  "playlist_id" TEXT NOT NULL,
+  "playlist_snapshot_id" TEXT,
+  "added_at" DATETIME NOT NULL,
+  CONSTRAINT "PK_PlaylistTrack" PRIMARY KEY("track_id", "playlist_id"),
+  CONSTRAINT "fk_playlisttrack_trackid" FOREIGN KEY("track_id") REFERENCES "Track"("id"),
+  CONSTRAINT "fk_playlisttrack_playlistid" FOREIGN KEY("playlist_id") REFERENCES "Playlist"("id")
+);
+CREATE TABLE IF NOT EXISTS "AlbumArtist"(
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "album_id" TEXT NOT NULL,
+  "artist_id" TEXT NOT NULL,
+  CONSTRAINT "PK_AlbumArtist" PRIMARY KEY("album_id", "artist_id"),
+  CONSTRAINT "fk_albumartist_albumid" FOREIGN KEY("album_id") REFERENCES "Album"("id"),
+  CONSTRAINT "fk_albumartist_artistid" FOREIGN KEY("artist_id") REFERENCES "Artist"("id")
+);
+CREATE TABLE IF NOT EXISTS "TrackArtist"(
+  "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "modified_at" DATETIME,
+  "track_id" TEXT NOT NULL,
+  "artist_id" TEXT NOT NULL,
+  CONSTRAINT "PK_TrackArtist" PRIMARY KEY("track_id", "artist_id"),
+  CONSTRAINT "fk_trackartist_trackid" FOREIGN KEY("track_id") REFERENCES "Track"("id"),
+  CONSTRAINT "fk_trackartist_artistid" FOREIGN KEY("artist_id") REFERENCES "Artist"("id")
+);
+CREATE INDEX "IX_Album_release_date" ON "Album"("release_date" ASC);
+CREATE INDEX "IX_PlaylistTrack_added_at" ON "PlaylistTrack"("added_at" DESC);
+CREATE INDEX "IX_PlaylistTrack_album_id" ON "PlaylistTrack"("album_id" ASC);
+CREATE INDEX "IX_PlaylistTrack_playlist_id" ON "PlaylistTrack"(
+  "playlist_id" ASC
+);
+CREATE INDEX "IX_PlaylistTrack_playlist_snapshot_id" ON "PlaylistTrack"(
+  "playlist_snapshot_id" ASC
+);
+CREATE TRIGGER playlist_modified
+    after update
+    on Playlist
+begin
+    update Playlist set modified_at = current_timestamp where id = new.id;
+end;
+CREATE TRIGGER artist_modified
+    after update
+    on Artist
+begin
+    update Artist set modified_at = current_timestamp where id = new.id;
+end;
+CREATE TRIGGER album_modified
+    after update
+    on Album
+begin
+    update Album set modified_at = current_timestamp where id = new.id;
+end;
+CREATE TRIGGER playlist_track_modified
+    after update
+    on PlaylistTrack
+begin
+    update PlaylistTrack
+    set modified_at = current_timestamp
+    where track_id = new.track_id
+      and playlist_id = new.playlist_id;
+end;
+CREATE TRIGGER track_modified
+    after update
+    on Track
+begin
+    update Track set modified_at = current_timestamp where id = new.id;
+end;
