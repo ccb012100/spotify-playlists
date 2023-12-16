@@ -1,0 +1,29 @@
+-- Find Playlists whose `count` field does match the PlaylistTrack found in the
+-- DB; a mismatch means we need to re-sync the Playlist from Spotify
+-- sqlite3 ~/playlister.db ".read track_count_mismatch.sqlite"
+.headers on
+.mode tabs
+
+select
+  p.id,
+  p.created_at,
+  p.modified_at,
+  p.name,
+  p.count,
+  pt.db_count
+from
+  Playlist p
+  join (
+    select
+      playlist_id,
+      count(*) as db_count
+    from
+      PlaylistTrack
+    group by
+      playlist_id
+  ) as pt on pt.playlist_id = p.id
+where
+  count <> db_count
+
+.output stdout
+.headers off
