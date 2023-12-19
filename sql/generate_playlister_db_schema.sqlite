@@ -2,5 +2,5 @@
 -- sqlite3 --readonly "$HOME/playlister.db" ".read generate_playlister_db_schema.sqlite"
 
 .output sql/playlister_db_schema.sqlite
-.schema
+.schema --indent
 .output stdout
