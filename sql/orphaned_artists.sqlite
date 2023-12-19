@@ -1,0 +1,15 @@
+-- Find orphaned Artists
+-- sqlite3 ~/playlister.db ".read orphaned_artists.sqlite"
+.headers on
+.mode tabs
+
+select
+  *
+from
+  Artist a
+  left join TrackArtist ta on a.id = ta.artist_id
+where
+  ta.artist_id is null
+
+.output stdout
+.headers off
