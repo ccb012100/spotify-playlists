@@ -214,7 +214,7 @@ sync)
         # updates albums.tsv
         "$py_script"
         # print header line and then sort remaining lines into sorted_tsv
-        awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
+        LC_ALL=C awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
         sqlite3 --readonly "$db" ".param init" ".output $all_albums_tsv" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
     *)
