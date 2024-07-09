@@ -11,7 +11,9 @@ import sys
 sql_db = str(Path.home() / "playlister.db")
 
 # assumes it's hosted in the same repo as this script
-spreadsheet = "{}/{}".format(os.path.abspath(os.path.dirname(__file__)), "../albums/starred_albums.tsv")
+spreadsheet = "{}/{}".format(
+    os.path.abspath(os.path.dirname(__file__)), "../albums/starred_albums.tsv"
+)
 
 sql_query = """select GROUP_CONCAT(artist, '; ') as artists, album, track_count, release_date, added_at, playlist
 from
@@ -88,7 +90,7 @@ def add_albums(spreadsheet, albums):
         with open(spreadsheet, "a") as f:  # open in append mode
             f.write(data_to_write)
 
-        print_success("Success: added {} albums!".format(str(len(albums))))
+        print_success("\n✔️ Success: added {} albums! ✔️".format(str(len(albums))))
     else:
         print_error("Error: entries collection was empty")
         sys.exit()
@@ -147,7 +149,9 @@ for row in db_row:
             new_entries.reverse()
             add_albums(spreadsheet, new_entries)
         else:
-            print_success("Nothing to add; the spreadsheet is already up to date!")
+            print_success(
+                "\n📢 Nothing to add; the spreadsheet is already up to date! 📢"
+            )
         sys.exit()
     else:
         new_entries.append(album)
