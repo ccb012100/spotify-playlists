@@ -9,12 +9,12 @@ py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
 # set $SM_TSV in the environment to override these
-all_albums_tsv="$sm_repo/albums/all_albums.tsv"
-starred_tsv="$sm_repo/albums/starred_albums.tsv"
-sorted_tsv="$sm_repo/albums/sorted_albums.tsv"
+albums_dir="$sm_repo/albums"
+all_albums_tsv="$albums_dir/all_albums.tsv"
+sorted_tsv="$albums_dir/sorted_albums.tsv"
+starred_tsv="$albums_dir/starred_albums.tsv"
 
 # ANSI colors
-blue='\033[0;34m'
 clearformat='\033[0m' # clear formatting
 orange='\033[0;33m'
 red='\033[0;31m'
@@ -78,66 +78,12 @@ function print_table() {
         column --table --separator $'\t' --output-separator $'    ' --table-truncate 1,2
     fi
 }
-function format_matches() {
-    if [ -p /dev/stdin ]; then
-        [[ -t 1 ]] && echo -en "${blue}" # set text to blue if stdout is tty
-
-        if [[ "${SM_TSV:-}" || "${SM_INCLUDE_PLAYLIST:-}" ]]; then
-            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10), $6 }' |
-                print_table
-        else
-            awk -F '\t' '{ printf "%s\t%s\t%3d\t%s\t%s\n", $1, $2, $3, substr($4,1,4), substr($5,1,10) }' |
-                print_table
-        fi
-
-        [[ -t 1 ]] && echo -en "${clearformat}" # clear formatting
-    else
-        error "Error: no input was found on stdin"
-    fi
-}
-function sort() {
-    if [ -p /dev/stdin ]; then
-        sort -t $'\t' -k "$1","$1" </dev/stdin |
-            awk '{ print } END { print "\n\t" NR " match(es)" }'
-    else
-        error "Error: no input was found on stdin"
-    fi
-}
-function sort_by_release() {
-    sort 4
-}
-function sort_by_artist() {
-    sort 1
-}
-function sort_by_album() {
-    sort 2
-}
-function search() {
-    # "${*}" will group all the args into a single quoted string, so we
-    # don't have to wrap the search in quotes on the command line, e.g. we
-    # can enter `sm Allman Brothers`` instead of `sm "Allman Brothers"`
-    error="$(validate_search_term "${*}")"
-    if [[ -n "$error" ]]; then
-        error "$error"
-        return 1
-    fi
-    rg -i "${*}" "${SM_TSV:-$sorted_tsv}"
-}
-function default_search() {
-    search "${*}" | format_matches
-}
 
 # TODO: use getopts to parse options
 case $1 in
 # print usage info
 -h | --help | help)
     print_usage
-    ;;
-# pass through all args to default search
-verbatim)
-    shift
-    search_term="${*}"
-    default_search "${*}"
     ;;
 # search sqlite DB on artist/album name
 db)
@@ -175,41 +121,13 @@ last)
     fi
     sqlite3 --readonly "$db" ".param init" ".param set :limit $limit" ".read $sql_scripts_dir/get_last_x_additions.sqlite"
     ;;
-# rs)
-#     starred_music_rs # binary located in ~/bin/
-#     ;;
-sort)
-    shift
-    echo -e "\t--Search for '" "${@:2}" "'--\n"
-    case $1 in
-    date)
-        shift
-        search_term="${*}"
-        search "${*}" | format_matches | sort_by_release
-        ;;
-        # search tsv file and sort by artist
-    artist)
-        shift
-        search_term="${*}"
-        search "${*}" | format_matches | sort_by_release
-        ;;
-    album)
-        shift
-        search_term="${*}"
-        search "${*}" | format_matches | sort_by_album
-        ;;
-    *)
-        info -e "'sort' must be followed by [date | artist]\n"
-        print_usage
-        ;;
-    esac
-    ;;
 sync)
     case $2 in
     # sync sqlite db
     db)
         dotnet run --project "$playlister" --configuration Release
         ;;
+    # sync tsv files
     tsv)
         # updates albums.tsv
         "$py_script"
