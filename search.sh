@@ -5,6 +5,7 @@ sm_repo=$(dirname -- "$(readlink -f -- "$0")")
 
 db="$HOME/playlister.db"
 playlister="$HOME/bin/playlister/Playlister/"
+playlist_util="$HOME/bin/playlist-util"
 py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
@@ -129,9 +130,9 @@ sync)
         ;;
     # sync tsv files
     tsv)
-        # updates albums.tsv
-        "$py_script"
-        # print header line and then sort remaining lines into sorted_tsv
+        # update $starred_tsv
+        $playlist_util sync --source "$db" --destination "$starred_tsv"
+        # print header line and then sort remaining lines into $sorted_tsv
         LC_ALL=C awk 'NR <2 { print; next } { print | "sort --ignore-case" }' "$starred_tsv" >|"$sorted_tsv"
         sqlite3 --readonly "$db" ".param init" ".output $all_albums_tsv" ".read $sql_scripts_dir/export_playlisterdb_to_tsv.sqlite"
         ;;
