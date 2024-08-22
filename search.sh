@@ -6,7 +6,6 @@ sm_repo=$(dirname -- "$(readlink -f -- "$0")")
 db="$HOME/playlister.db"
 playlister="$HOME/bin/playlister/Playlister/"
 playlist_util="$HOME/bin/playlist-util"
-py_script="$sm_repo/scripts/update_starred_albums_tsv.py"
 sql_scripts_dir="$sm_repo"/sql
 
 # set $SM_TSV in the environment to override these
