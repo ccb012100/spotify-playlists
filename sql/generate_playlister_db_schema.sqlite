@@ -1,6 +1,0 @@
--- generate the CREATE DB script for playlister.db
--- sqlite3 --readonly "$HOME/playlister.db" ".read generate_playlister_db_schema.sqlite"
-
-.output sql/playlister_db_schema.sqlite
-.schema --indent
-.output stdout
