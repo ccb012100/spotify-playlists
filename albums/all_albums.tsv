@@ -68,16 +68,16 @@ Zoe's Shanghai	Undergrowth	6	2024	2024-09-20 12:38:16	> Instrumental - misc.
 前田憲男	サウンド・イン・ビクトロン	8	1979	2024-05-22 17:34:58	> Instrumental - misc.
 前田憲男; 稲垣次郎オールスターズ	決定盤! これぞジャズ・ロック	12	1968	2024-05-22 17:34:58	> Instrumental - misc.
 Camera Obscura	Let's Get Out Of This Country	10	2006	2024-08-29 12:15:31	> Vocal - check out
-Fousheé	Pointy Heights	10	2024	2024-09-22 23:58:54	> Vocal - check out
 J.J. Jackson	The Great J.J. Jackson	20	2023	2024-09-18 15:50:35	> Vocal - check out
 Nick Mason's Saucerful of Secrets	Live at the Roundhouse	22	2020	2024-07-09 19:10:58	> Vocal - check out
 Patsy Cline	Sentimentally Yours	12	1962	2024-09-19 16:34:53	> Vocal - check out
 R.L. Boyce	Ain't the Man's Alright	6	2013	2024-08-29 19:33:37	> Vocal - check out
-Reyna Tropical	Malegría	20	2024	2024-09-27 15:39:11	> Vocal - check out
 Robert Lamm	Skinny Boy 2.0	17	2006	2024-09-03 14:29:34	> Vocal - check out
 The Everly Brothers	The Everly Brothers	11	1958	2024-07-09 18:57:00	> Vocal - check out
 The Pink Fairies	Neverneverland	14	1971	2024-09-03 14:25:47	> Vocal - check out
 Various Artists	Resistance Radio: The Man in the High Castle Album	18	2017	2024-07-01 15:05:19	> Vocal - check out
+Bad Company	Live 1977 & 1979	30	2016	2024-09-30 14:03:31	> Vocal - live
+Blind Faith	Hyde Park '69	9	2020	2024-09-30 14:08:49	> Vocal - live
 Bob Dylan; The Band	The 1974 Live Recordings Sampler	20	2024	2024-09-20 12:34:52	> Vocal - live
 Eagles	Eagles Live	15	1980	2024-09-21 13:24:19	> Vocal - live
 Eagles	Hotel California (40th Anniversary Expanded Edition)	19	1976	2024-09-23 19:10:43	> Vocal - live
@@ -98,6 +98,8 @@ Kimbra	Idols & Vices (Vol. 1)	14	2024	2024-09-26 13:44:53	> Vocal - misc.
 Kimbra	Idols & Vices (Vol. 1)	15	2024	2024-09-26 13:45:02	> Vocal - misc.
 Lucius	Wildewoman (The New Recordings)	13	2024	2024-06-01 17:48:15	> Vocal - misc.
 MICHELLE	Songs About You Specifically	11	2024	2024-09-27 13:53:12	> Vocal - misc.
+Reyna Tropical	Reyna Tropical	4	2018	2024-09-30 15:41:03	> Vocal - misc.
+Reyna Tropical	Sol Y Lluvia	6	2019	2024-09-30 15:41:12	> Vocal - misc.
 Snow Patrol	The Forest Is The Path	12	2024	2024-09-13 15:01:16	> Vocal - misc.
 West, Bruce & Laing	Whatever Turns You On	9	1973	2024-08-28 15:37:56	> Vocal - misc.
 Ximena Sariñana	Ojos Diamante	4	2024	2024-09-27 18:52:35	> Vocal - misc.
@@ -1696,6 +1698,15 @@ Freddie King	The Blues Live! (Expanded Edition)	11	2012	2021-11-16 20:34:30	Fred
 Freddie Roach	Brown Sugar	6	1964	2023-12-19 22:27:05	Freddie Roach
 Freddie Roach	Good Move	8	1963	2023-12-19 22:27:03	Freddie Roach
 Freddie Roach	Mo' Greens Please	10	1963	2023-12-19 22:27:01	Freddie Roach
+Free	Free At Last	15	2002	2024-09-30 14:10:41	Free
+Free	Free At Last	9	1972	2024-09-30 14:10:48	Free
+Free	Highway	9	1970	2024-09-30 14:11:32	Free
+Free	Highway (Remastered with Bonus Tracks)	15	1970	2024-09-30 14:11:26	Free
+Free	Live	14	2020	2024-09-30 14:09:37	Free
+Free	Live at the Isle of Wight Festival 1970	10	2018	2024-09-30 14:10:06	Free
+Free	Live in Stockholm December 1970	9	2014	2024-09-30 14:10:09	Free
+Free	Tons Of Sobs	10	1968	2024-09-30 14:09:57	Free
+Free	Tons Of Sobs (Remastered / Bonus Track Edition)	18	2001	2024-09-30 14:10:00	Free
 The Friends Of Distinction	Friends & People	10	1971	2023-02-15 16:52:57	Friends of Distinction
 The Friends Of Distinction	Highly Distinct	9	1969	2023-02-15 16:52:47	Friends of Distinction
 The Friends Of Distinction	Love Can Make It Easier	11	1973	2023-02-15 16:52:59	Friends of Distinction
@@ -1723,7 +1734,6 @@ Future Islands	Wave Like Home	9	2008	2020-11-27 16:41:42	Future Islands
 Gaby Moreno	Illustrated Songs	12	2011	2022-07-06 19:19:26	Gaby Moreno
 Gaby Moreno	Ilusión	13	2016	2022-07-06 19:19:19	Gaby Moreno
 Gaby Moreno	Posada	12	2015	2022-07-06 19:19:21	Gaby Moreno
-Gaby Moreno	Still The Unkown	10	2008	2022-07-06 19:19:28	Gaby Moreno
 Gaby Moreno; Van Dyke Parks	¡Spangled!	10	2019	2022-07-06 19:19:17	Gaby Moreno
 Gene Chandler	80 + Here's to Love	16	1980	2023-03-13 19:57:52	Gene Chandler
 Gene Chandler	When You're No. 1	6	1979	2023-03-13 19:57:47	Gene Chandler
@@ -3210,12 +3220,16 @@ Nicole Atkins	Slow Phaser (Deluxe Edition)	19	2014	2020-08-20 16:44:57	Nicole At
 The Night Above Us	Vol. 1	5	2020	2021-01-12 18:53:12	Night Above Us
 The Night Above Us	Vol. 3	4	2020	2021-01-12 18:53:04	Night Above Us
 The Night Above Us	Volume 2	5	2020	2021-01-12 18:53:00	Night Above Us
+Nirvana	Bleach	13	1989	2024-09-30 14:00:01	Nirvana
+Nirvana	Bleach (Deluxe Edition)	25	1989	2024-09-30 13:59:56	Nirvana
 Nirvana	Bleach: Deluxe Edition	25	2009	2020-01-13 14:58:57	Nirvana
 Nirvana	From The Muddy Banks Of The Wishkah (Live)	17	1996	2020-01-13 14:59:09	Nirvana
+Nirvana	In Utero (30th Anniversary Super Deluxe)	72	2023	2024-09-30 13:57:37	Nirvana
 Nirvana	Incesticide	15	1992	2020-01-13 15:01:59	Nirvana
 Nirvana	Lithium	3	1992	2020-01-13 15:02:24	Nirvana
 Nirvana	Live At The Paramount	19	2019	2020-01-13 14:58:55	Nirvana
 Nirvana	Live at Reading	24	2009	2020-01-13 14:58:59	Nirvana
+Nirvana	Nevermind (30th Anniversary Super Deluxe)	75	2021	2024-09-30 13:58:07	Nirvana
 Nono Söderberg	Hot Wires	14	1997	2024-01-29 21:51:15	Nono Söderberg
 Nono Söderberg	Rare Bird	7	1982	2024-01-29 21:51:09	Nono Söderberg
 Nono Söderberg	Twisting Standards	12	2002	2024-01-29 21:51:11	Nono Söderberg
@@ -4071,6 +4085,7 @@ Soulive	The Viper	4	2024	2024-04-26 15:16:55	Soulive
 Soulive	Up Here	9	2009	2023-03-11 19:44:45	Soulive
 Soundgarden	Badmotorfinger	47	2016	2023-07-26 19:56:24	Soundgarden
 Soundgarden	Live From The Artists Den	29	2019	2023-07-26 19:56:47	Soundgarden
+Soundgarden	Louder Than Love	12	1989	2024-09-30 13:55:05	Soundgarden
 Soundgarden	Screaming Life/Fopp	11	2013	2023-07-26 19:56:40	Soundgarden
 Soundgarden	Ultramega OK (Expanded Reissue)	19	2017	2023-07-26 19:56:45	Soundgarden
 Spacebomb House Band	IX: The Best Played Lands	16	2020	2020-09-21 13:25:18	Spacebomb House Band
