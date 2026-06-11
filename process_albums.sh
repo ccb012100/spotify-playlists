@@ -20,7 +20,18 @@ mkdir -p "$ARTISTS_DIR"
 mkdir -p "$CHECKOUT_DIR"
 
 # Skip header line, process each row
-tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r artist album track_count release_date added_at playlist; do
+tail -n +2 "$INPUT_FILE" | while IFS= read -r line; do
+    artist="${line%%$'\t'*}"
+    line="${line#*$'\t'}"
+    album="${line%%$'\t'*}"
+    line="${line#*$'\t'}"
+    track_count="${line%%$'\t'*}"
+    line="${line#*$'\t'}"
+    release_date="${line%%$'\t'*}"
+    line="${line#*$'\t'}"
+    added_at="${line%%$'\t'*}"
+    playlist="${line#*$'\t'}"
+
     # Trim whitespace
     artist="$(trim_whitespace "$artist")"
     album="$(trim_whitespace "$album")"
