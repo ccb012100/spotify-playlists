@@ -3,21 +3,31 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INPUT_FILE="$SCRIPT_DIR/albums/all_albums_sorted.tsv"
-ARTISTS_DIR="$SCRIPT_DIR/artists"
+ARTISTS_DIR="$SCRIPT_DIR/artists_sh"
 CHECKOUT_DIR="$ARTISTS_DIR/_check_out"
 
+shopt -s extglob
+
+trim_whitespace() {
+    local value="$1"
+    value="${value##+([[:space:]])}"
+    value="${value%%+([[:space:]])}"
+    printf '%s' "$value"
+}
+
+rm -rf "$ARTISTS_DIR"
 mkdir -p "$ARTISTS_DIR"
 mkdir -p "$CHECKOUT_DIR"
 
 # Skip header line, process each row
 tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r artist album track_count release_date added_at playlist; do
     # Trim whitespace
-    artist="${artist##[[:space:]]}${artist%%[[:space:]]}"
-    album="${album##[[:space:]]}${album%%[[:space:]]}"
-    track_count="${track_count##[[:space:]]}${track_count%%[[:space:]]}"
-    release_date="${release_date##[[:space:]]}${release_date%%[[:space:]]}"
-    added_at="${added_at##[[:space:]]}${added_at%%[[:space:]]}"
-    playlist="${playlist##[[:space:]]}${playlist%%[[:space:]]}"
+    artist="$(trim_whitespace "$artist")"
+    album="$(trim_whitespace "$album")"
+    track_count="$(trim_whitespace "$track_count")"
+    release_date="$(trim_whitespace "$release_date")"
+    added_at="$(trim_whitespace "$added_at")"
+    playlist="$(trim_whitespace "$playlist")"
 
     # Skip rows with empty artist or album
     if [[ -z "$artist" ]] || [[ -z "$album" ]]; then

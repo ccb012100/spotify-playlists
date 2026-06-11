@@ -4,8 +4,13 @@ from pathlib import Path
 
 script_dir = Path(__file__).resolve().parent
 input_file = script_dir / "albums" / "all_albums_sorted.tsv"
-artists_dir = script_dir / "artists"
+artists_dir = script_dir / "artists_py"
 checkout_dir = artists_dir / "_check_out"
+
+if artists_dir.exists():
+    import shutil
+
+    shutil.rmtree(artists_dir)
 
 artists_dir.mkdir(exist_ok=True)
 checkout_dir.mkdir(exist_ok=True)
@@ -44,7 +49,9 @@ with open(input_file, newline="", encoding="utf-8") as f:
         if not artist_path.exists():
             unheard_path.mkdir(parents=True)
 
-        full_row = "\t".join(row)
+        full_row = "\t".join(
+            [artist, album, track_count, release_date, added_at, playlist]
+        )
 
         if playlist.startswith("Starred"):
             # Starred playlist: file goes in artists/<artist>/<album>

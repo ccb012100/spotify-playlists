@@ -2,9 +2,10 @@
 
 set SCRIPT_DIR (cd (dirname (status filename)); and pwd)
 set INPUT_FILE "$SCRIPT_DIR/albums/all_albums_sorted.tsv"
-set ARTISTS_DIR "$SCRIPT_DIR/artists"
+set ARTISTS_DIR "$SCRIPT_DIR/artists_fish"
 set CHECKOUT_DIR "$ARTISTS_DIR/_check_out"
 
+rm -rf "$ARTISTS_DIR"
 mkdir -p "$ARTISTS_DIR"
 mkdir -p "$CHECKOUT_DIR"
 
