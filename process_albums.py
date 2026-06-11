@@ -16,7 +16,7 @@ def safe_name(name: str) -> str:
 
 
 with open(input_file, newline="", encoding="utf-8") as f:
-    reader = csv.reader(f, delimiter="\t")
+    reader = csv.reader(f, delimiter="\t", quoting=csv.QUOTE_NONE)
     header = next(reader)  # skip header
 
     for row in reader:
