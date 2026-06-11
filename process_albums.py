@@ -5,7 +5,7 @@ from pathlib import Path
 script_dir = Path(__file__).resolve().parent
 input_file = script_dir / "albums" / "all_albums_sorted.tsv"
 artists_dir = script_dir / "artists"
-checkout_dir = script_dir / "check out"
+checkout_dir = artists_dir / "_check_out"
 
 artists_dir.mkdir(exist_ok=True)
 checkout_dir.mkdir(exist_ok=True)
@@ -24,6 +24,9 @@ with open(input_file, newline="", encoding="utf-8") as f:
         # Trim whitespace
         artist = artist.strip()
         album = album.strip()
+        track_count = track_count.strip()
+        release_date = release_date.strip()
+        added_at = added_at.strip()
         playlist = playlist.strip()
 
         # Skip rows with empty artist or album
@@ -33,9 +36,9 @@ with open(input_file, newline="", encoding="utf-8") as f:
         safe_artist = safe_name(artist)
         safe_album = safe_name(album)
 
-        # Ensure artists/<artist>/unheard/ exists
+        # Ensure artists/<artist>/_unheard/ exists
         artist_path = artists_dir / safe_artist
-        unheard_path = artist_path / "unheard"
+        unheard_path = artist_path / "_unheard"
         if not artist_path.exists():
             unheard_path.mkdir(parents=True)
 
@@ -56,7 +59,7 @@ with open(input_file, newline="", encoding="utf-8") as f:
                 af.write(full_row + "\n")
 
         else:
-            # All other playlists: file goes in artists/<artist>/unheard/<album>
+            # All other playlists: file goes in artists/<artist>/_unheard/<album>
             unheard_path.mkdir(parents=True, exist_ok=True)
             album_file = unheard_path / safe_album
             with open(album_file, "a", encoding="utf-8") as af:

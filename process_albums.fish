@@ -34,9 +34,9 @@ while read -l line
     set -l safe_artist (string replace -a '/' '_' "$artist")
     set -l safe_album (string replace -a '/' '_' "$album")
 
-    # Ensure artists/<artist>/unheard/ exists
+    # Ensure artists/<artist>/_unheard/ exists
     if not test -d "$ARTISTS_DIR/$safe_artist"
-        mkdir -p "$ARTISTS_DIR/$safe_artist/unheard"
+        mkdir -p "$ARTISTS_DIR/$safe_artist/_unheard"
     end
 
     # Reconstruct the full row
@@ -60,9 +60,9 @@ while read -l line
         echo -e "$full_row" >>"$album_file"
 
     else
-        # All other playlists: file goes in artists/<artist>/unheard/<album>
-        mkdir -p "$ARTISTS_DIR/$safe_artist/unheard"
-        set -l album_file "$ARTISTS_DIR/$safe_artist/unheard/$safe_album"
+        # All other playlists: file goes in artists/<artist>/_unheard/<album>
+        mkdir -p "$ARTISTS_DIR/$safe_artist/_unheard"
+        set -l album_file "$ARTISTS_DIR/$safe_artist/_unheard/$safe_album"
         if not test -f "$album_file"
             touch "$album_file"
         end
