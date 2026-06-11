@@ -24,9 +24,11 @@ tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r artist album track_count rele
         continue
     fi
 
-    # Sanitize names for use as file/directory names (replace / with _)
+    # Sanitize names for use as file/directory names (replace / with _) and limit to 200 chars
     safe_artist="${artist//\//_}"
+    safe_artist="${safe_artist:0:200}"
     safe_album="${album//\//_}"
+    safe_album="${safe_album:0:200}"
 
     # Ensure artists/<artist>/_unheard/ exists
     if [[ ! -d "$ARTISTS_DIR/$safe_artist" ]]; then

@@ -12,7 +12,9 @@ checkout_dir.mkdir(exist_ok=True)
 
 
 def safe_name(name: str) -> str:
-    return name.replace("/", "_")
+    # Replace forward slashes and limit length to 200 chars
+    truncated = name.replace("/", "_")[:200]
+    return truncated
 
 
 with open(input_file, newline="", encoding="utf-8") as f:

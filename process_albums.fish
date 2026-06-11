@@ -30,9 +30,9 @@ while read -l line
         continue
     end
 
-    # Sanitize names for use as file/directory names (replace / with _)
-    set -l safe_artist (string replace -a '/' '_' "$artist")
-    set -l safe_album (string replace -a '/' '_' "$album")
+    # Sanitize names for use as file/directory names (replace / with _) and limit to 200 chars
+    set -l safe_artist (string replace -a '/' '_' "$artist" | string sub -l 200)
+    set -l safe_album (string replace -a '/' '_' "$album" | string sub -l 200)
 
     # Ensure artists/<artist>/_unheard/ exists
     if not test -d "$ARTISTS_DIR/$safe_artist"
