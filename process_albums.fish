@@ -3,7 +3,7 @@
 set SCRIPT_DIR (cd (dirname (status filename)); and pwd)
 set INPUT_FILE "$SCRIPT_DIR/albums/all_albums_sorted.tsv"
 set ARTISTS_DIR "$SCRIPT_DIR/artists"
-set CHECKOUT_DIR "$SCRIPT_DIR/check out"
+set CHECKOUT_DIR "$ARTISTS_DIR/_check_out"
 
 mkdir -p "$ARTISTS_DIR"
 mkdir -p "$CHECKOUT_DIR"
@@ -18,12 +18,17 @@ while read -l line
 
     # Split on tab
     set -l fields (string split \t "$line")
-    set -l artist $fields[1]
-    set -l album $fields[2]
-    set -l track_count $fields[3]
-    set -l release_date $fields[4]
-    set -l added_at $fields[5]
-    set -l playlist $fields[6]
+    set -l artist (string trim $fields[1])
+    set -l album (string trim $fields[2])
+    set -l track_count (string trim $fields[3])
+    set -l release_date (string trim $fields[4])
+    set -l added_at (string trim $fields[5])
+    set -l playlist (string trim $fields[6])
+
+    # Skip rows with empty artist or album
+    if test -z "$artist" || test -z "$album"
+        continue
+    end
 
     # Sanitize names for use as file/directory names (replace / with _)
     set -l safe_artist (string replace -a '/' '_' "$artist")
@@ -43,7 +48,7 @@ while read -l line
         if not test -f "$album_file"
             touch "$album_file"
         end
-        echo -e "$full_row" >> "$album_file"
+        echo -e "$full_row" >>"$album_file"
 
     else if string match -q '*check out*' "$playlist"
         # Check out playlist: file goes in "check out"/<artist>/<album>
@@ -52,7 +57,7 @@ while read -l line
         end
         set -l album_file "$CHECKOUT_DIR/$safe_artist/$safe_album"
         touch "$album_file"
-        echo -e "$full_row" >> "$album_file"
+        echo -e "$full_row" >>"$album_file"
 
     else
         # All other playlists: file goes in artists/<artist>/unheard/<album>
@@ -61,8 +66,8 @@ while read -l line
         if not test -f "$album_file"
             touch "$album_file"
         end
-        echo -e "$full_row" >> "$album_file"
+        echo -e "$full_row" >>"$album_file"
     end
-end < "$INPUT_FILE"
+end <"$INPUT_FILE"
 
 echo "Done processing albums."

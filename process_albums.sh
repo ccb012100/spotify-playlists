@@ -11,6 +11,16 @@ mkdir -p "$CHECKOUT_DIR"
 
 # Skip header line, process each row
 tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r artist album track_count release_date added_at playlist; do
+    # Trim whitespace
+    artist="${artist##[[:space:]]}${artist%%[[:space:]]}"
+    album="${album##[[:space:]]}${album%%[[:space:]]}"
+    playlist="${playlist##[[:space:]]}${playlist%%[[:space:]]}"
+
+    # Skip rows with empty artist or album
+    if [[ -z "$artist" ]] || [[ -z "$album" ]]; then
+        continue
+    fi
+
     # Sanitize names for use as file/directory names (replace / with _)
     safe_artist="${artist//\//_}"
     safe_album="${album//\//_}"

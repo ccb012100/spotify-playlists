@@ -21,6 +21,15 @@ with open(input_file, newline="", encoding="utf-8") as f:
 
     for row in reader:
         artist, album, track_count, release_date, added_at, playlist = row
+        # Trim whitespace
+        artist = artist.strip()
+        album = album.strip()
+        playlist = playlist.strip()
+
+        # Skip rows with empty artist or album
+        if not artist or not album:
+            continue
+
         safe_artist = safe_name(artist)
         safe_album = safe_name(album)
 
