@@ -1,0 +1,84 @@
+# Classical music
+
+## Composers
+
+- Erik Satie
+- Franz Liszt
+- Frédéric Chopin  
+- Johann Sebastian Bach
+- Johannes Brahms
+- Ludwig van Beethoven
+- Niccolò Paganini
+
+## Performers
+
+- Akademie für Alte Musik Berlin
+- Amandine Beyer
+- András Schiff
+- Andrew Manze
+- Angela Hewitt
+- Anne Queffélec
+- Arthur Rubinstein
+- Bavarian State Orchestra
+- Bernard Haitink
+- Carlos Kleiber
+- Chicago Symphony Orchestra
+- Christopher O'Riley
+- Claudio Arrau
+- Craig Leon
+- Electric Beethoven
+- Emerson String Quartet
+- Erik Satie
+- European Brandenburg Ensemble
+- Fernando Cordas
+- Fritz Reiner
+- George Enescu
+- Glenn Gould
+- György Ligeti
+- Henryk Szeryng
+- Hilary Hahn
+- Hubert Laws;
+- Itzhak Perlman
+- Ivan Iliev
+- Izhar Elias
+- Jaap Ter Linden
+- Jacques Loussier
+- Jacques Loussier Trio
+- Jean Fournet
+- Jean-François Paillard
+- Jeffrey Kahane
+- Jeremy Denk
+- Jerusalem Quartet
+- Joseph Szigeti
+- Los Angeles Chamber Orchestra
+- Lynn Harrell
+- Martha Argerich
+- Matt Haimovitz
+- Michel Debost
+- Moshe Atzmon
+- Nicanor Zabaleta
+- Orchestra della Radio della Svizzera Italiana
+- Orchestra della Svizzera Italiana
+- Orchestre de chambre Jean-François Paillard
+- Orchestre Symphonique De Paris
+- Pascal Rogé
+- Paul Galbraith
+- Paul Klecki
+- Pierre Monteux
+- Reinbert de Leeuw  
+- Riccardo Muti
+- Richard Egarr
+- Roberto Diaz
+- Ronald Brautigam
+- Royal Concertgebouw Orchestra  
+- Ruggiero Ricci
+- Sebastien Llinares
+- Sharon Kam
+- Sophie Pacini
+- Staatskapelle Dresden
+- Trevor Pinnock
+- Vadim Repin
+- Vladimir Ashkenazy
+- Wiener Philharmoniker
+- Yehudi Menuhin
+- Zefira Valova
